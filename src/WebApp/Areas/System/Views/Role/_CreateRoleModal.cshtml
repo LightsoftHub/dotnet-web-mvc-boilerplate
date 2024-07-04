@@ -1,0 +1,31 @@
+﻿@model CreateRoleRequest
+
+@{
+    ViewData["Title"] = "Add New Role";
+}
+
+<s-modal-header />
+
+<form ajax asp-action="Create" autocomplete="off">
+
+    <div class="modal-body">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="form-group">
+            <label asp-for="Name" class="font-bold"></label><span class="require">*</span>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Description" class="font-bold"></label>
+            <input asp-for="Description" class="form-control" />
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <btn-submit>Save</btn-submit>
+    </div>
+
+</form>

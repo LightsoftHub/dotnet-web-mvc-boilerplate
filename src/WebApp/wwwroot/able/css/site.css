@@ -1,0 +1,190 @@
+﻿:root {
+    /* alert */
+    --bs-danger-text: #d12c47;
+    --bs-danger-bg-subtle: rgba(209, 44, 71, 0.15);
+    --bs-danger-border-subtle: rgba(209, 44, 71, 0.15);
+}
+
+/* fix for modal under sweet aler2 */
+.modal {
+    z-index: 1072;
+}
+
+.btn, .introjs-tooltip .introjs-button {
+    --bs-btn-border-radius: 2px;
+    --bs-btn-padding-y: 0.4rem;
+    border-radius: var(--bs-btn-border-radius);
+}
+
+.pc-sidebar .navbar-content {
+    height: calc(100vh);
+}
+
+.datatable-table td, .datatable-table th, .table td, .table th {
+    padding: 0.4rem 0.4rem;
+}
+
+/* Select 2 */
+.select2 {
+    width: 100% !important;
+    display: inline-block;
+}
+
+.select2-container--default .select2-selection--single {
+    border: 1px solid #e3ebf6;
+    height: 38px;
+    background-color: #ffffff;
+}
+
+    .select2-container--default .select2-selection--single:focus {
+        outline: none;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        color: var(--bs-body-color);
+        line-height: 38px;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 38px;
+        right: 8px;
+    }
+
+.select2-container--default .select2-selection--multiple {
+    /*background-color: #ffffff;*/
+}
+
+    .select2-container--default .select2-selection--multiple .select2-selection__choice {
+        margin-top: 7px;
+        background-color: #12a4ed;
+        border: 1px solid #e3ebf6;
+        color: #ffffff;
+    }
+
+    .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+        color: #ffffff;
+    }
+
+.select2-container--default .select2-search--dropdown .select2-search__field {
+    /*background-color: #ffffff;*/
+    border: 1px solid #e3ebf6;
+    color: #303e67;
+}
+
+    .select2-container--default .select2-search--dropdown .select2-search__field:focus {
+        border: 1px solid var(--bs-primary);
+    }
+
+.select2-container--default.select2-container--focus .select2-selection--multiple {
+    border: 1px solid #e3ebf6;
+    outline: 0;
+}
+
+.select2-container .select2-selection--multiple {
+    min-height: 38px;
+    border: 1px solid #e3ebf6;
+}
+
+.select2-container .select2-search--inline .select2-search__field {
+    margin-top: 8px;
+    color: #303e67;
+}
+
+.select2-dropdown {
+    /*background-color: #ffffff;*/
+    border: 1px solid #e3ebf6;
+}
+
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: var(--bs-primary) !important;
+    color: white;
+}
+
+[data-pc-theme=dark] .select2-container--default .select2-selection--single {
+    border: 1px solid #303f50;
+    height: 38px;
+    background-color: #263240;
+}
+
+[data-pc-theme=dark] .select2-dropdown {
+    background-color: #263240;
+    border: 1px solid #303f50;
+}
+
+
+/* Side bar */
+.pc-item .active > .pc-link {
+    color: var(--pc-sidebar-active-color);
+}
+
+/* pagination */
+.pagination {
+    --bs-pagination-color: "";
+}
+
+/* scrollbar style */
+*::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+    transition: 0.3s background;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c0e5d9;
+}
+
+*:hover::-webkit-scrollbar-thumb {
+    background: #adb5bd;
+}
+
+/* custom */
+.notification-entry {
+    --bs-card-spacer-y: 10px;
+}
+
+.label-info {
+    border-radius: 5px;
+    background-color: var(--bs-gray-300);
+    color: var(--bs-gray-600);
+    padding: 5px;
+}
+
+.form-label {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.dt-buttons.btn-group.flex-wrap .btn, .dt-buttons.btn-group.flex-wrap .introjs-tooltip .introjs-button, .introjs-tooltip .dt-buttons.btn-group.flex-wrap .introjs-button {
+    font-size: 12px;
+    padding: 7px;
+    color: #868e96;
+    background-color: #e4e7ecc5;
+    border-color: #e4e7ecc5;
+}
+
+    .dt-buttons.btn-group.flex-wrap .btn:hover {
+        color: #fff;
+        background-color: #adb5bd;
+    }
+
+[data-pc-theme=dark] .dt-buttons.btn-group.flex-wrap .btn, .dt-buttons.btn-group.flex-wrap .introjs-tooltip .introjs-button, .introjs-tooltip .dt-buttons.btn-group.flex-wrap .introjs-button {
+    font-size: 12px;
+    padding: 7px;
+    color: unset;
+    background-color: unset;
+    border-color: unset;
+}
+
+[data-pc-theme=dark] #jump-to-page {
+    background-color: var(--bs-table-border-color);
+}
+
+/* Table */
+.table thead th {
+    text-align: center;
+}
+
+/* Input */
+.form-control, .datatable-input, .custom-select, .dataTable-selector, .dataTable-input {
+    padding: 0.5rem 0.75rem;
+}

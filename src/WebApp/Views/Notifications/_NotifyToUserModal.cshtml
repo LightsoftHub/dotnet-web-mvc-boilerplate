@@ -1,0 +1,119 @@
+﻿@{
+    ViewData["Title"] = "Notify to user";
+}
+
+<s-modal-header />
+
+<form ajax asp-action="Create" autocomplete="off">
+    <div class="modal-body">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="mb-3 row">
+                <label class="col-sm-4 form-label align-self-center mb-lg-0 text-end">From User</label>
+                <div class="col-sm-8">
+                    <select id="NotifyFrom" name="NotifyFrom" class="form-control" type="text"></select>
+                </div>
+            </div>
+
+            <div class="mb-3 row">
+                <label class="col-sm-4 form-label align-self-center mb-lg-0 text-end">To User</label>
+                <div class="col-sm-8">
+                    <select id="NotifyTo" name="NotifyTo" class="form-control" type="text" required>
+                        @*option value="all">All</option>*@<
+                    </select>
+                </div>
+            </div>
+
+            <div class="mb-3 row">
+                <label class="col-sm-4 form-label align-self-center mb-lg-0 text-end">Title</label>
+                <div class="col-sm-8">
+                    <input id="Title" name="Title" class="form-control" value="Hello!!!" required>
+                </div>
+            </div>
+
+            <div class="mb-3 row">
+                <label class="col-sm-4 form-label align-self-center mb-lg-0 text-end">Content</label>
+                <div class="col-sm-8">
+                    <textarea id="Content" name="Content" rows="3" class="form-control">This is system.</textarea>
+                </div>
+            </div>
+
+            <div class="mb-3 row">
+                <label class="col-sm-4 form-label align-self-center mb-lg-0 text-end">Url</label>
+                <div class="col-sm-8">
+                    <input id="Url" name="Url" class="form-control">
+                </div>
+            </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-primary">
+            Send
+        </button>
+    </div>
+</form>
+
+<script>
+    $(document).ready(function() {
+        var searchUserUrl = 'system/user/search';
+        
+        // get customer from Controller
+        $("#NotifyFrom").select2({
+            placeholder: "select a user",
+            minimumInputLength: 3,
+            dropdownParent: $("#NotifyFrom").parent(),
+            ajax: {
+                url: searchUserUrl,
+                dataType: 'json',
+                type: "GET",
+                quietMillis: 50,
+                data: function(params) {
+                    var query = {
+                        search: params.term
+                    }
+
+                    // Query parameters will be ?search=[term]&type=public
+                    return query;
+                },
+                processResults: function(result) {
+                    return {
+                        results: $.map(result, function(item) {
+                            return {
+                                id: item.value,
+                                text: item.name
+                            };
+                        }),
+                    };
+                }
+            }
+        });
+
+        $("#NotifyTo").select2({
+            placeholder: "select a user",
+            minimumInputLength: 3,
+            dropdownParent: $("#NotifyTo").parent(),
+            ajax: {
+                url: searchUserUrl,
+                dataType: 'json',
+                type: "GET",
+                quietMillis: 50,
+                data: function(params) {
+                    var query = {
+                        search: params.term
+                    }
+
+                    // Query parameters will be ?search=[term]&type=public
+                    return query;
+                },
+                processResults: function(result) {
+                    return {
+                        results: $.map(result, function(item) {
+                            return {
+                                id: item.value,
+                                text: item.name
+                            };
+                        }),
+                    };
+                }
+            }
+        });
+    });
+</script>

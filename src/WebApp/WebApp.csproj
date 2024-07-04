@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+	<RootNamespace>CleanArch.eCode.WebApp</RootNamespace>
+	<AssemblyName>CleanArch.eCode.WebApp</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+	<PackageReference Include="MSW.Light.Ddd.Core" Version="0.0.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HttpApi.Client\HttpApi.Client.csproj" />
+    <ProjectReference Include="..\Infrastructure.Auth\Infrastructure.Auth.csproj" />
+    <ProjectReference Include="..\Shared\Shared.csproj" />
+  </ItemGroup>
+
+</Project>

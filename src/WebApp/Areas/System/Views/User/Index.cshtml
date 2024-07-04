@@ -1,0 +1,84 @@
+﻿@model IEnumerable<UserDto>
+
+@{
+    ViewData["Title"] = "Users Management";
+}
+
+<page-header />
+
+<div class="text-end pb-2">
+    <btn-modal url="@Url.Action("Create")">
+        <i class="fas fa-plus-circle"></i> Add User
+    </btn-modal>
+</div>
+
+<!-- [ Main Content ] start -->
+<div class="row">
+    <!-- [ sample-page ] start -->
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered w-100 datatable-buttons">
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Name</th>
+                                <th>Phone No.</th>
+                                <th>E-mail</th>
+                                <th>Status</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var row in Model)
+                            {
+                                var deleteMgs = "Do you really want to delete user: " + row.UserName + "?";
+                                var statusStyle = row.Status == IdentityStatus.active ? "bg-light-success" : "bg-light-warning";
+
+                                <tr>
+                                    <td>@row.UserName</td>
+                                    <td>@row.FirstName @row.LastName</td>
+                                    <td>@row.PhoneNumber</td>
+                                    <td>@row.Email</td>
+                                    <td>
+                                        <span class="badge @statusStyle f-12">@row.Status.ToString()</span>
+                                    </td>
+                                    <td>
+                                        <ul class="list-inline me-auto mb-0">
+                                            <li class="list-inline-item align-bottom" data-bs-toggle="tooltip" title="Edit">
+                                                <a asp-action="Update" asp-route-id="@row.Id" class="avtar avtar-xs btn-link-primary btn-pc-default">
+                                                    <i class="ti ti-edit-circle f-18"></i>
+                                                </a>
+                                            </li>
+                                            <li class="list-inline-item align-bottom" data-bs-toggle="tooltip" title="Delete">
+                                                <a href="javascript:void(0)" onclick="redirectIfConfirm('@deleteMgs', '@Url.Action("Delete", new { row.Id })')" class="avtar avtar-xs btn-link-danger btn-pc-default">
+                                                    <i class="ti ti-trash f-18"></i>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- [ sample-page ] end -->
+</div>
+<!-- [ Main Content ] end -->
+
+@section Styles {
+    <partial name="Components/dataTables/_dataTables.css" />
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <partial name="Components/datatables/_datatables.js" />
+
+    <script type="text/javascript">
+    </script>
+}

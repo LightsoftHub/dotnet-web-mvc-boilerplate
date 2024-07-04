@@ -1,0 +1,154 @@
+﻿@model IPagedView
+
+@{
+    // How many pages views left & right from currentPage
+    const int LeftPages = 3;
+    const int RightPages = 3;
+
+    var currentPage = Model.Page;
+    var pageCount = Model.TotalPages;
+    var previousPage = currentPage > 1 ? currentPage - 1 : 1;
+    var nextPage = currentPage == pageCount ? pageCount : currentPage + 1;
+}
+
+@if (Model is not null &&  Model.TotalPages > 0)
+{
+    <div class="row mt-3">
+        <div class="col-sm-4">
+            <div>
+                Page <input id="jump-to-page" asp-for="Page" onchange="jumpToPage()" /> of <b>@Model.TotalPages</b>
+            </div>
+            <small>Total <b>@Model.TotalRecords.ToFNumber()</b> records</small>
+        </div>
+        <div class="col-sm-8">
+            <ul class="pagination pagination-sm justify-content-end">
+                @{
+                    <li class="page-item">
+                        <a class="page-link" href="javascript:void(0)" onclick="previous()">
+                            <span aria-hidden="true">«</span>
+                        </a>
+                    </li>
+
+                    // get first page befor ...
+                    var fromPage = Math.Max(1, currentPage - LeftPages);
+
+                    // get last page after ...
+                    var toPage = Math.Min(pageCount, currentPage + RightPages);
+
+                    if (pageCount - toPage == 1)
+                    {
+                        toPage = pageCount;
+                    }
+
+                    if (fromPage > 1)
+                    {
+                        // view First page
+                        <li class="page-item">
+                            <a class="page-link" href="javascript:void(0)" onclick="filter('1')">1</a>
+                        </li>
+                        if (fromPage > 2)
+                        {
+                            // view first ...
+                            // calculate number page for link ..., it's middle between first page and fromPage
+                            var middleNumber = (int)Math.Ceiling((double)(fromPage - 2) / 2) + 1;
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:void(0)">...</a>
+                            </li>
+                        }
+                    }
+
+                    // view paginator between currentPage
+                    for (int i = fromPage; i <= toPage; i++)
+                    {
+                        <li class="page-item @Html.Raw(currentPage == i ? "active" : "")">
+                            <a class="page-link" href="javascript:void(0)" onclick="filter('@i')">@i</a>
+                        </li>
+                    }
+
+                    // view second ...
+                    if (toPage < pageCount)
+                    {
+                        int middleNumber = (int)Math.Ceiling((double)(pageCount - toPage) / 2) + toPage;
+                        <li class="page-item">
+                            <a class="page-link" href="javascript:void(0)">...</a>
+                        </li>
+                        // view last page
+                        if (toPage < pageCount - 1)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:void(0)" onclick="filter('@pageCount')">@pageCount</a>
+                            </li>
+                        }
+                    }
+
+                    <li class="page-item">
+                        <a class="page-link" href="javascript:void(0)" onclick="next()">
+                            <span aria-hidden="true">»</span>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        function showResult(res) {
+            $('@Model.ShowResultInId').html(res);
+        }
+
+        filter = (pageNo) => {
+            // convert search model to Json
+            var json = @Json.Serialize(Model.SearchModel);
+
+            // set page value to searchModel
+            json.page = pageNo;
+
+            $.post('@Model.Url', json, showResult);
+        }
+
+        function jumpToPage() {
+            var pageNo = $("#jump-to-page").val();
+
+            if (pageNo > @Model.TotalPages || pageNo < 1) {
+                pageNo = 1;
+            }
+
+            filter(pageNo);
+        }
+
+        function next() {
+            const currentPage = '@currentPage';
+            const nextPage = '@nextPage';
+
+            if (nextPage != currentPage) {
+                filter(nextPage);
+            }
+        }
+
+        function previous() {
+            const currentPage = '@currentPage';
+            const previousPage = '@previousPage';
+
+            if (previousPage != currentPage) {
+                filter(previousPage);
+            }
+        }
+    </script>
+    <style>
+        #jump-to-page {
+            background-color: #FFFFFF;
+            background-image: none;
+            border: 1px solid #e5e6e7;
+            border-radius: 1px;
+            color: inherit;
+            width: 50px;
+            font-weight: bold;
+        }
+
+            #jump-to-page::-webkit-inner-spin-button,
+            #jump-to-page::-webkit-outer-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
+    </style>
+}

@@ -1,0 +1,119 @@
+﻿@page
+@model CleanArch.eCode.WebApp.Pages.Auth.LoginModel
+
+@{
+    ViewData["Title"] = "Login";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <partial name="_MetaHead" />
+
+    <!-- [FontAwesome Icons] https://fonts.google.com/icons -->
+    <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css" />
+
+    <!-- [Template CSS Files] -->
+    <link rel="stylesheet" href="~/able/css/style.css" id="main-style-link" />
+    <link rel="stylesheet" href="~/able/css/style-preset.css" />
+    <link rel="stylesheet" href="~/able/css/site.css" />
+
+    <link rel="stylesheet" href="~/lib/animate/animate.css">
+    <link rel="stylesheet" href="~/lib/spinner/sk-spinner.css">
+
+    <style>
+        .validation-summary-errors ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+    </style>
+</head>
+<body data-pc-preset="@WebUIConstants.ABLE_PRESET" data-pc-sidebar-caption="true" data-pc-direction="ltr" data-pc-theme_contrast="" data-pc-theme="light">
+
+    <partial name="_PreLoader" />
+
+    <div class="auth-main">
+        <div class="auth-wrapper v1">
+            <div class="auth-form">
+                <div class="card my-5 animated fadeInDown">
+                    <div class="card-body">
+                        <h4 class="text-center f-w-500 mb-3">Welcome to system!</h4>
+                        <form id="loginForm" method="POST">
+                            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                            <div class="form-group mb-3">
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-user"></i>
+                                    </span>
+                                    <input asp-for="UserName" type="text" class="form-control" placeholder="Username" required>
+                                </div>
+                            </div>
+                            <div class="form-group mb-3">
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-key"></i>
+                                    </span>
+                                    <input asp-for="Password" type="password" class="form-control" placeholder="Password" required>
+                                </div>
+                            </div>
+                            <div class="d-flex mt-1 justify-content-between align-items-center">
+                                <div class="form-check">
+                                    <input asp-for="RememberMe" class="form-check-input input-primary" type="checkbox" id="rememberCheck">
+                                    <label class="form-check-label text-muted" for="rememberCheck">Remember me?</label>
+                                </div>
+                                <a href="javascript:void(0)" onclick="alert('Please contact administrators.')">
+                                    <h6 class="text-secondary f-w-400 mb-0">Forgot Password?</h6>
+                                </a>
+                            </div>
+                            <div class="d-grid mt-4">
+                                <button type="submit" class="btn btn-primary btn-submit">Login</button>
+                            </div>
+                            <div class="sk-spinner sk-spinner-double-bounce" style="display:none;">
+                                <div class="sk-spinner sk-spinner-cube-grid">
+                                    <div class="sk-cube"></div>
+                                    <div class="sk-cube"></div>
+                                    <div class="sk-cube"></div>
+                                    <div class="sk-cube"></div>
+                                    <div class="sk-cube"></div>
+                                    <div class="sk-cube"></div>
+                                    <div class="sk-cube"></div>
+                                    <div class="sk-cube"></div>
+                                    <div class="sk-cube"></div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Js -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <!-- Required Js -->
+    <script src="~/able/js/plugins/popper.min.js"></script>
+    <script src="~/able/js/plugins/simplebar.min.js"></script>
+    <script src="~/able/js/plugins/bootstrap.min.js"></script>
+    <script src="~/able/js/fonts/custom-font.js"></script>
+    <script src="~/able/js/pcoded.js"></script>
+    <script src="~/able/js/plugins/feather.min.js"></script>
+
+    <!-- Page JS Plugins -->
+    <partial name="_ValidationScriptsPartial" />
+
+    <script type="text/javascript">
+        $("#loginForm").on("submit", function () {
+            var isValid = $(this).valid();
+            //check validate if all field are validate true
+            if (isValid == true) {
+                $(".btn-submit").css('display', 'none');
+                $(".sk-spinner").css('display', '');
+            }
+        });
+    </script>
+
+</body>
+</html>

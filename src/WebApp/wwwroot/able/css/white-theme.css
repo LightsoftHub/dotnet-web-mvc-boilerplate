@@ -1,0 +1,7 @@
+﻿/* Custom Theme Color */
+:root {
+    --bs-body-bg: #fff;
+    --pc-sidebar-background: #fff;
+    --pc-sidebar-border: none;
+    --pc-header-background: #fff;
+}

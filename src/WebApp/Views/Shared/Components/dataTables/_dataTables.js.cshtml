@@ -1,0 +1,72 @@
+﻿<script src="~/able/lib/dataTables/js/jquery.dataTables.min.js"></script>
+<script src="~/able/lib/dataTables/js/dataTables.bootstrap5.min.js"></script>
+<script src="~/able/lib/dataTables/js/buttons.colVis.min.js"></script>
+<script src="~/able/lib/dataTables/js/buttons.print.min.js"></script>
+<script src="~/able/lib/dataTables/js/pdfmake.min.js"></script>
+<script src="~/able/lib/dataTables/js/jszip.min.js"></script>
+<script src="~/able/lib/dataTables/js/dataTables.buttons.min.js"></script>
+<script src="~/able/lib/dataTables/js/vfs_fonts.js"></script>
+<script src="~/able/lib/dataTables/js/buttons.html5.min.js"></script>
+<script src="~/able/lib/dataTables/js/buttons.bootstrap5.min.js"></script>
+
+<script type="text/javascript">
+	@*
+	B - Buttons
+	f - Filtering input
+	r - Processing display element
+	t - The table
+	i - Table information summary
+	p - Pagination control
+	*/
+	*@
+
+	// Basic Data Table
+	$('.datatable').DataTable({
+		aaSorting: [],
+	});
+
+	// Buttons Data Table
+	$('.datatable-buttons').DataTable({
+		aaSorting: [],
+		responsive: true,
+		language: {
+			searchPlaceholder: 'search...',
+			sSearch: '',
+		},
+		dom: "<'row'<'col-md-4'l><'col-md-4'B><'col-md-4'f>r>t<'row'<'col-md-6'i><'col-md-6'p>>",
+		//dom: '<"top"<"left-col"B><"center-col"l><"right-col"f>>Brtip',
+		//dom: "Blfrtip",
+		buttons: [
+			{
+				extend: 'colvis',
+				text: 'columns',
+				className: 'btn btn-sm',
+			},
+			{
+				extend: 'copy',
+				text: 'copy',
+			},
+			{
+				extend: 'print',
+				text: 'print',
+			},
+			{
+				extend: 'excelHtml5',
+				text: 'excel',
+				className: 'btn btn-sm',
+				header: true,
+				title: '', // disable Page title in export files
+			}
+		],
+	});
+
+	// Responsive Data Table
+	$('.datatable-responsive').DataTable({
+		aaSorting: [],
+		responsive: true,
+		language: {
+			searchPlaceholder: 'Search...',
+			sSearch: '',
+		}
+	});
+</script>
