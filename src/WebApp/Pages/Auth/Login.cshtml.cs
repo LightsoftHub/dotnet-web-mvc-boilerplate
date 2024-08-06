@@ -53,11 +53,6 @@ public class LoginModel(TokenHttpService tokenHttpService) : PageModel
         else
         {
             ModelState.AddModelError("", getToken.Message);
-
-            foreach (var error in getToken.Errors)
-            {
-                ModelState.AddModelError("", error);
-            }
         }
     }
 }

@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-	<PackageReference Include="MSW.Light.Ddd.Core" Version="0.0.0.4" />
+	<PackageReference Include="Lightsoft.Ddd.Core" Version="0.0.0.2" />
   </ItemGroup>
 
   <ItemGroup>

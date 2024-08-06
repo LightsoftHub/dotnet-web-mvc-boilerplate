@@ -50,7 +50,7 @@ public static class ResultExtensions
         {
             return new PagedResult<T>
             {
-                Code = ResultCode.Error,
+                Code = ResultCode.Error.ToString(),
                 Message = $"Error when deserialize result of {nameof(T)}: {responseString}"
             };
         }

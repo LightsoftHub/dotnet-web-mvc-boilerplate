@@ -45,7 +45,7 @@ public class TryHttpClient(IHttpClientFactory httpClientFactory) :
         {
             return new PagedResult<T>
             {
-                Code = ResultCode.Error,
+                Code = ResultCode.Error.ToString(),
                 Message = ex.Message
             };
         }

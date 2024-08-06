@@ -1,6 +1,8 @@
 ﻿using CleanArch.eCode.Shared.Common.Dtos;
 using CleanArch.eCode.WebApp.Core.ViewModels;
+using Light.Contracts;
 using Microsoft.AspNetCore.Mvc;
+using IResult = Light.Contracts.IResult;
 
 namespace CleanArch.eCode.WebApp.Core.Extensions;
 
@@ -8,7 +10,7 @@ public static class ResultExtensions
 {
     private const string _break = "<br>";
 
-    public static WebResult ToWebResult(this Light.Contracts.IResult result)
+    public static WebResult ToWebResult(this IResult result)
     {
         var webResult = new WebResult
         {
@@ -16,15 +18,12 @@ public static class ResultExtensions
             Message = result.Message,
         };
 
-        if (result.Errors != null && result.Errors.Any())
-        {
-            webResult.Message += _break + string.Join(_break, result.Errors);
-        }
+        webResult.Message = result.Message.Replace("|", _break);
 
         return webResult;
     }
 
-    public static JsonResult AsJson(this Light.Contracts.IResult result, bool successCode = false)
+    public static JsonResult AsJson(this IResult result, bool successCode = false)
     {
         var webResult = result.ToWebResult();
 
@@ -38,7 +37,7 @@ public static class ResultExtensions
 
         return new JsonResult(webResult)
         {
-            StatusCode = (int)result.Code
+            StatusCode = (int)result.MapHttpStatusCode()
         };
     }
 
@@ -51,7 +50,7 @@ public static class ResultExtensions
 
         return new JsonResult(webResult)
         {
-            StatusCode = (int)result.Code
+            StatusCode = (int)result.MapHttpStatusCode()
         };
     }
 
