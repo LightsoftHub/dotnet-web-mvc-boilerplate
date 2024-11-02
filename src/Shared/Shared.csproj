@@ -9,11 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-	<PackageReference Include="FluentValidation" Version="11.9.2" />
+	<PackageReference Include="FluentValidation" Version="11.10.0" />
 	<PackageReference Include="Mapster" Version="7.4.0" />
-	<PackageReference Include="Lightsoft.Extensions" Version="0.0.0.1" />
+	<PackageReference Include="Lightsoft.Extensions" Version="0.0.0.5" />
 	<PackageReference Include="Lightsoft.Identity" Version="0.0.0.1" />
-	<PackageReference Include="Lightsoft.Result" Version="0.0.0.1" />
+	<PackageReference Include="Lightsoft.Result" Version="0.0.0.4" />
   </ItemGroup>
 
 </Project>

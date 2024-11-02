@@ -1,5 +1,5 @@
 ﻿using CleanArch.eCode.WebApp.Core.ViewModels;
-using Light.Application.Common.Exceptions;
+using Light.Exceptions;
 using System.Net;
 using System.Text.Json;
 

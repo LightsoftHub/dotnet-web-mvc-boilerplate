@@ -10,7 +10,7 @@ public class NotificationHttpService(IHttpClientFactory httpClientFactory) :
     public Task<PagedResult<NotificationDto>> GetAsync(NotificationLookup request)
     {
         var url = $"{_path}";
-        url += "?" + request.BuildQuery();
+        url += "?" + UriQueryBuilder.ToQueryString(request);
 
         return TryGetPagedAsync<NotificationDto>(url);
     }
