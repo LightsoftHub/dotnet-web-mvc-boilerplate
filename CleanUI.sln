@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HttpApi.Client", "src\HttpA
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApp", "src\WebApp\WebApp.csproj", "{5079BB12-EE0E-4E71-85AD-B1D406253149}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebBlazor", "WebBlazor\WebBlazor.csproj", "{10727F9E-CAF3-4294-B116-C017D09E4586}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{5079BB12-EE0E-4E71-85AD-B1D406253149}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5079BB12-EE0E-4E71-85AD-B1D406253149}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5079BB12-EE0E-4E71-85AD-B1D406253149}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10727F9E-CAF3-4294-B116-C017D09E4586}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10727F9E-CAF3-4294-B116-C017D09E4586}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10727F9E-CAF3-4294-B116-C017D09E4586}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10727F9E-CAF3-4294-B116-C017D09E4586}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -44,6 +50,7 @@ Global
 		{6F084F7A-782B-4209-898B-2295FF50704F} = {91B3A206-4C50-4E25-8D45-185052E0950E}
 		{7270BB2F-F0B7-4F46-A864-70F852C6B9B8} = {91B3A206-4C50-4E25-8D45-185052E0950E}
 		{5079BB12-EE0E-4E71-85AD-B1D406253149} = {91B3A206-4C50-4E25-8D45-185052E0950E}
+		{10727F9E-CAF3-4294-B116-C017D09E4586} = {91B3A206-4C50-4E25-8D45-185052E0950E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1FFF7CFB-378C-4E38-9542-17C00D0955A4}
