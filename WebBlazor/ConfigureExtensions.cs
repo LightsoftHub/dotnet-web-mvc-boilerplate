@@ -23,6 +23,7 @@ public static class ServicesExtension
 
         services.AddAuth();
 
+        services.AddScoped<FuncService>();
         services.AddScoped<SpinnerService>();
 
         return services;

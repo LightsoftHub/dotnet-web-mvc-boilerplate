@@ -23,6 +23,8 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+app.UseStatusCodePagesWithRedirects("/error");
+
 app.UseHttpsRedirection();
 
 app.ConfigurePipelines(builder.Configuration);

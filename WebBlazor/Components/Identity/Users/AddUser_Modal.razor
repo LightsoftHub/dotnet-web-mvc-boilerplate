@@ -1,0 +1,84 @@
+﻿<MudDialog>
+    <DialogContent>
+
+        <EditForm Model="@newUser" method="post" OnValidSubmit=OnSubmit FormName="createForm">
+
+            <DataAnnotationsValidator />
+
+            <div class="mb-3">
+                <MudTextField @bind-Value=newUser.UserName
+                    Label="Username" Required=true
+                    TextChanged=SearchUserDomain />
+            </div>
+
+            <div class="mb-3">
+                <MudTextField @bind-Value=newUser.Password InputType="InputType.Password" Label="Password" />
+            </div>
+
+            <div class="row mb-3">
+                <div class="col">
+                    <MudTextField @bind-Value=newUser.FirstName Label="FirstName" Required=true />
+                </div>
+                <div class="col">
+                    <MudTextField @bind-Value=newUser.LastName Label="LastName" Required=true />
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col">
+                    <MudTextField @bind-Value=newUser.Email Label="Email" />
+                </div>
+                <div class="col">
+                    <MudTextField @bind-Value=newUser.PhoneNumber Label="PhoneNumber" />
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <MudCheckBox @bind-Value=newUser.UseDomainPassword Label="Use Domain Password" />
+            </div>
+
+        </EditForm>
+
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OnSubmit">Save</MudButton>
+    </DialogActions>
+
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; } = default!;
+
+    private CreateUserRequest newUser = new();
+
+    private async Task SearchUserDomain()
+    {
+        var username = newUser.UserName;
+
+        if (string.IsNullOrEmpty(username))
+            return;
+
+        var getDomainUser = await UserService.GetDomainUserAsync(username);
+
+        if (getDomainUser.Succeeded)
+        {
+            newUser.FirstName = getDomainUser.Data.FirstName;
+            newUser.LastName = getDomainUser.Data.LastName;
+            newUser.Email = getDomainUser.Data.Email;
+            newUser.PhoneNumber = getDomainUser.Data.PhoneNumber;
+            newUser.UseDomainPassword = true;
+        }
+    }
+
+    private async Task OnSubmit()
+    {
+        var result = await ExecuteService.CallGuardedAsync(
+            () => UserService.CreateAsync(newUser),
+            $"New user {newUser.UserName} created");
+
+        if (result.Succeeded)
+            MudDialog.Close(DialogResult.Ok(result));
+    }
+}

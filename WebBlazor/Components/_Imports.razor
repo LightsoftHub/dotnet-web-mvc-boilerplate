@@ -1,5 +1,6 @@
 ﻿@using System.Net.Http
 @using System.Net.Http.Json
+@using CleanArch.eCode.WebBlazor.Infrastructure.Services
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Components.Routing
 @using Microsoft.AspNetCore.Components.Web
@@ -11,10 +12,13 @@
 @using Microsoft.AspNetCore.Authorization
 
 @using MudBlazor
+@inject IDialogService DialogService
+@inject ISnackbar Toastr
 
 @attribute [Authorize]
 
 @inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
 
 @using CleanArch.eCode.Shared.Authorization
 @inject ICurrentUser CurrentUser
@@ -27,3 +31,4 @@
 @using CleanArch.eCode.WebBlazor.Components.Shared
 @using CleanArch.eCode.WebBlazor.Components.Shared.Spinner
 @inject SpinnerService SpinnerService
+@inject FuncService ExecuteService

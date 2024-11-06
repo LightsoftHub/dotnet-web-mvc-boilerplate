@@ -1,5 +1,9 @@
 ﻿<MudNavMenu Rounded="true" Margin="Margin.Dense" Class="pa-2">
     <MudNavLink Href="/counter" Icon="@Icons.Material.Filled.Dashboard">Dashboard</MudNavLink>
+    <MudNavGroup Title="Management" Icon="@Icons.Material.Filled.Shield">
+        <MudNavLink Href="/users">Users</MudNavLink>
+        <MudNavLink Href="/security">Security</MudNavLink>
+    </MudNavGroup>
     <MudNavLink Match="NavLinkMatch.Prefix" Href="/components/navmenu" Icon="@Icons.Material.Filled.Storage">Servers</MudNavLink>
     <MudNavLink Href="/weather" Icon="@Icons.Material.Filled.Science">The Lab</MudNavLink>
 </MudNavMenu>

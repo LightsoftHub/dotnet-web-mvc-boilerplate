@@ -9,6 +9,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Components\Account\Pages\Login.razor.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Components\Account\Pages\Login.razor.js" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="MudBlazor" Version="7.15.0" />
     <PackageReference Include="MudBlazor.ThemeManager" Version="2.1.0" />
   </ItemGroup>
