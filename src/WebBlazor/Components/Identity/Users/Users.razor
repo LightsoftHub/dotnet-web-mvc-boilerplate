@@ -1,0 +1,175 @@
+﻿@using CleanArch.eCode.Infrastructure.Auth.Permissions
+@using Light.Identity
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.FluentUI.AspNetCore.Components
+@using DialogParameters = Microsoft.FluentUI.AspNetCore.Components.DialogParameters
+@using DialogResult = Microsoft.FluentUI.AspNetCore.Components.DialogResult
+@using Icons = Microsoft.FluentUI.AspNetCore.Components.Icons
+
+@page "/users"
+@attribute [MustHavePermission(Permissions.Users.View)]
+
+@inject UserHttpService UserHttpService
+@inject Microsoft.FluentUI.AspNetCore.Components.IToastService ToastService
+@inject Microsoft.FluentUI.AspNetCore.Components.IDialogService DialogService
+
+<PageHeader Title="Users" />
+
+<Card>
+
+    <FluentButton @onclick="@OpenAddUserDialogAsync"
+                    IconStart="@(new Icons.Regular.Size16.AddCircle())"
+                    Appearance="Appearance.Accent">
+        Add new
+    </FluentButton>
+
+    <div class="table-responsive mt-3">
+
+        <FluentDataGrid Items="@filteredUsers"
+                        ResizableColumns=true
+                        ResizeType="DataGridResizeType.Discrete"
+                        Pagination="@pagination"
+                        HeaderCellAsButtonWithMenu="true"
+                        Style="overflow: auto;min-width: 900px;"
+                        Loading="loading">
+
+            <Microsoft.FluentUI.AspNetCore.Components.PropertyColumn Property="@(c => c.UserName)" Sortable="true" Filtered="!string.IsNullOrWhiteSpace(nameFilter)" Tooltip="true" Title="Username">
+                <ColumnOptions>
+                    <div class="search-box">
+                        <FluentSearch Autofocus=true @bind-Value=nameFilter @oninput="HandleCountryFilter" @bind-Value:after="HandleClear" Placeholder="username..." Style="width: 100%;" Label="Filter" />
+                    </div>
+                </ColumnOptions>
+            </Microsoft.FluentUI.AspNetCore.Components.PropertyColumn>
+
+            <Microsoft.FluentUI.AspNetCore.Components.PropertyColumn Title="Full Name" Property="@(c => $"{c.FirstName} {c.LastName}")" Sortable="false" />
+
+            <Microsoft.FluentUI.AspNetCore.Components.PropertyColumn Property="@(c => c.Email)" Sortable="false" />
+
+            <Microsoft.FluentUI.AspNetCore.Components.PropertyColumn Property="@(c => c.PhoneNumber)" Sortable="false" />
+
+            <Microsoft.FluentUI.AspNetCore.Components.TemplateColumn Title="Actions" Align="@Microsoft.FluentUI.AspNetCore.Components.Align.End">
+
+                <FluentButton
+                    aria-label="Edit item"
+                    IconEnd="@(new Icons.Regular.Size16.Edit())" 
+                    OnClick="@(() => NavigationManager.NavigateTo($"/user/{context.Id}"))"/>
+
+                <FluentButton aria-label="Delete item"
+                                IconEnd="@(new Icons.Regular.Size16.Delete())"
+                                OnClick="@(() => ShowDeleteWarningAsync(context.Id, context.UserName))" />
+
+            </Microsoft.FluentUI.AspNetCore.Components.TemplateColumn>
+        </FluentDataGrid>
+
+    </div>
+
+    <FluentPaginator State="@pagination" />
+
+</Card>
+
+@code {
+    private IQueryable<UserDto>? users;
+
+    private PaginationState pagination = new PaginationState { ItemsPerPage = 10 };
+
+    string nameFilter = string.Empty;
+
+    private bool loading = false;
+
+    IQueryable<UserDto>? filteredUsers
+    {
+        get
+        {
+            var result = users;
+
+            if (result is not null && !string.IsNullOrEmpty(nameFilter))
+            {
+                result = result.Where(c =>
+                    c.UserName!.Contains(nameFilter, StringComparison.CurrentCultureIgnoreCase)
+                    || c.FirstName!.Contains(nameFilter)
+                    || c.LastName!.Contains(nameFilter)
+                );
+            }
+
+            return result;
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ReloadUserAsync();
+    }
+
+    private async Task ReloadUserAsync()
+    {
+        loading = true;
+
+        var getUsers = await UserHttpService.GetAsync();
+        if (getUsers.Succeeded)
+        {
+            users = getUsers.Data.AsQueryable();
+        }
+
+        loading = false;
+    }
+
+    private void HandleCountryFilter(ChangeEventArgs args)
+    {
+        if (args.Value is string value)
+        {
+            nameFilter = value;
+        }
+    }
+
+    private void HandleClear()
+    {
+        if (string.IsNullOrWhiteSpace(nameFilter))
+        {
+            nameFilter = string.Empty;
+        }
+    }
+
+    private async Task OpenAddUserDialogAsync()
+    {
+        DialogParameters parameters = new()
+        {
+            Title = $"Create new user",
+            PreventDismissOnOverlayClick = true,
+            PreventScroll = true,
+            Width = "500px"
+        };
+
+        var dialog = await DialogService.ShowDialogAsync<AddUser_Dialog>(parameters);
+        DialogResult? dialogResult = await dialog.Result;
+
+        if (!dialogResult.Cancelled && dialogResult.Data != null)
+        {
+            var result = (Result)dialogResult.Data;
+
+            if (result.Succeeded)
+            {
+                await ReloadUserAsync();
+            }
+        }
+    }
+
+    private async Task ShowDeleteWarningAsync(string id, string? username)
+    {
+        var dialog = await DialogService.ShowWarningAsync($"Are you sure you want to delete {username}?");
+        var result = await dialog.Result;
+        if (result.Cancelled is false)
+        {
+            var deleteUser = await UserHttpService.DeleteAsync(id);
+            if (deleteUser.Succeeded)
+            {
+                ToastService.ShowSuccess($"User {username} deleted");
+
+                await ReloadUserAsync();
+            }
+            else
+            {
+                ToastService.ShowError(deleteUser.Message);
+            }
+        }
+    }
+}

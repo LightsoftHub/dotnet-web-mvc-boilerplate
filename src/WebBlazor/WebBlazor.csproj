@@ -17,13 +17,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MudBlazor" Version="7.15.0" />
-    <PackageReference Include="MudBlazor.ThemeManager" Version="2.1.0" />
+    <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.10.3" />
+    <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Emoji" Version="4.6.0" />
+    <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.10.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\HttpApi.Client\HttpApi.Client.csproj" />
-    <ProjectReference Include="..\src\Infrastructure.Auth\Infrastructure.Auth.csproj" />
+    <ProjectReference Include="..\HttpApi.Client\HttpApi.Client.csproj" />
+    <ProjectReference Include="..\Infrastructure.Auth\Infrastructure.Auth.csproj" />
   </ItemGroup>
 
 </Project>

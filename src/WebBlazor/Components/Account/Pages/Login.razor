@@ -7,8 +7,6 @@
 @inject LoginService LoginService
 @inject IdentityRedirectManager IdentityRedirectManager
 
-<Spinner />
-
 <div class="d-flex flex-column vh-100 justify-content-center align-items-center bg-light">
     <div class="card" style="width: 22rem;">
         <img src="/images/dotnet/ASP-NET-Core-Logo.png" class="card-img-top" alt="...">
@@ -76,6 +74,8 @@
     {
         loading = true;
 
+        StateHasChanged();
+
         var login = await LoginService.LoginAsync(Input.Username, Input.Password, Input.RememberMe);
 
         if (login.Succeeded)
@@ -88,5 +88,7 @@
         }
 
         loading = false;
+
+        StateHasChanged();
     }
 }

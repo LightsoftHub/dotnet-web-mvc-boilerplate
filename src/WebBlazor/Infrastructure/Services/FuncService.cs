@@ -1,9 +1,9 @@
 ﻿using Light.Contracts;
-using MudBlazor;
+using Microsoft.FluentUI.AspNetCore.Components;
 
 namespace CleanArch.eCode.WebBlazor.Infrastructure.Services;
 
-public class FuncService(ISnackbar snackbar)
+public class FuncService(IToastService toastService)
 {
     public async Task<Result> CallGuardedAsync(Func<Task<Result>> call, string successMessage)
     {
@@ -13,18 +13,19 @@ public class FuncService(ISnackbar snackbar)
 
             if (result.Succeeded)
             {
-                snackbar.Add(successMessage, severity: Severity.Success);
+                toastService.ShowSuccess(successMessage);
             }
             else
             {
-                snackbar.Add(result.Message, severity: Severity.Error);
+                toastService.ShowError(result.Message);
             }
 
             return result;
         }
         catch (Exception ex)
         {
-            snackbar.Add(ex.Message, severity: Severity.Error);
+            toastService.ShowError(ex.Message);
+
             return Result.Error(ex.Message);
         }
     }

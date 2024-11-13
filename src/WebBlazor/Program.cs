@@ -1,7 +1,7 @@
 using CleanArch.eCode.WebBlazor;
 using CleanArch.eCode.WebBlazor.Components;
 using CleanArch.eCode.WebBlazor.Components.Account;
-using MudBlazor.Services;
+using Microsoft.FluentUI.AspNetCore.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddMudServices();
+builder.Services.AddFluentUIComponents();
 
 builder.Services.ConfigureServices(builder.Configuration);
 
