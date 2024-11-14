@@ -1,0 +1,84 @@
+﻿@layout BlankLayout
+
+@attribute [AllowAnonymous]
+
+@inject LoginService LoginService
+@inject IdentityRedirectManager IdentityRedirectManager
+
+<div class="d-flex flex-column vh-100 justify-content-center align-items-center bg-light">
+    <div class="card" style="width: 22rem;">
+        <img src="/images/dotnet/ASP-NET-Core-Logo.png" class="card-img-top" alt="...">
+        <div class="card-body">
+            
+            <StatusMessage Message="@errorMessage" />
+
+            <EditForm Model="@Input" method="post" OnValidSubmit=LoginSubmit FormName="loginForm">
+
+            <DataAnnotationsValidator />
+
+                @*
+                Must use Name="Input.{Prop_name}" for fix InvalidOperationException:
+                EditForm requires either a Model parameter, or an EditContext parameter, please provide one of these.
+                *@
+
+                <div class="form-floating mb-3">
+                    <InputText @bind-Value=Input.Username class="form-control" id="floatingInput" placeholder="Username" required />
+                    <label for="floatingInput">Username</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <InputText @bind-Value=Input.Password type="password" class="form-control" id="floatingPassword" placeholder="Password" required />
+                    <label for="floatingPassword">Password</label>
+                </div>
+
+                <div class="form-check form-switch mb-3">
+                    <InputCheckbox @bind-Value=Input.RememberMe class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" />
+                    <label class="form-check-label" for="flexSwitchCheckDefault">Remember me</label>
+                </div>
+
+                <button class="btn btn-primary w-100 py-2 btn-submit" type="submit" disabled=@loading>Sign In</button>
+                
+                <p class="mt-5 mb-3 text-body-secondary text-center">&copy; 2017–2024</p>
+            </EditForm>
+
+        </div>
+    </div>
+</div>
+
+@code {
+    private sealed class InputModel
+    {
+        [Required]
+        public string Username { get; set; } = "";
+
+        [Required]
+        [DataType(DataType.Password)]
+        public string Password { get; set; } = "";
+
+        [Display(Name = "Remember me?")]
+        public bool RememberMe { get; set; }
+    }
+
+    [SupplyParameterFromForm]
+    private InputModel Input { get; set; } = new();
+
+    [SupplyParameterFromQuery]
+    private string? ReturnUrl { get; set; }
+
+    private string? errorMessage;
+
+    private bool loading = false;
+
+    public async Task LoginSubmit()
+    {
+        var login = await LoginService.LoginAsync(Input.Username, Input.Password, Input.RememberMe);
+
+        if (login.Succeeded)
+        {
+            IdentityRedirectManager.RedirectTo(ReturnUrl);
+        }
+        else
+        {
+            errorMessage = "Error: Invalid login attempt.";
+        }
+    }
+}

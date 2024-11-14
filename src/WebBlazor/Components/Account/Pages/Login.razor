@@ -1,52 +1,91 @@
-﻿@page "/account/login"
+﻿@layout BlankLayout
 
-@layout BlankLayout
-
+@page "/account/login"
 @attribute [AllowAnonymous]
 
 @inject LoginService LoginService
 @inject IdentityRedirectManager IdentityRedirectManager
 
-<div class="d-flex flex-column vh-100 justify-content-center align-items-center bg-light">
-    <div class="card" style="width: 22rem;">
-        <img src="/images/dotnet/ASP-NET-Core-Logo.png" class="card-img-top" alt="...">
-        <div class="card-body">
-            
+<PageTitle>Log in</PageTitle>
+
+<FluentStack Orientation="Orientation.Vertical"
+             HorizontalAlignment="HorizontalAlignment.Center"
+             VerticalAlignment="VerticalAlignment.Center"
+             VerticalGap="20" Style="height: 100vh;">
+
+    <div class="d-flex flex-column">
+
+        <FluentCard>
             <StatusMessage Message="@errorMessage" />
 
-            <EditForm Model="@Input" method="post" OnValidSubmit=LoginSubmit FormName="loginForm">
+            <EditForm Model="@Input" method="post" OnValidSubmit=LoginSubmit FormName="login_form">
 
-            <DataAnnotationsValidator />
+                <DataAnnotationsValidator />
 
-                @*
-                Must use Name="Input.{Prop_name}" for fix InvalidOperationException:
-                EditForm requires either a Model parameter, or an EditContext parameter, please provide one of these.
-                *@
+                <h3>Sign In</h3>
 
-                <div class="form-floating mb-3">
-                    <InputText @bind-Value=Input.Username class="form-control" id="floatingInput" placeholder="Username" required />
-                    <label for="floatingInput">Username</label>
-                </div>
-                <div class="form-floating mb-3">
-                    <InputText @bind-Value=Input.Password type="password" class="form-control" id="floatingPassword" placeholder="Password" required />
-                    <label for="floatingPassword">Password</label>
-                </div>
+                <FluentValidationSummary class="text-danger" role="alert" />
 
-                <div class="form-check form-switch mb-3">
-                    <InputCheckbox @bind-Value=Input.RememberMe class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" />
-                    <label class="form-check-label" for="flexSwitchCheckDefault">Remember me</label>
-                </div>
+                <FluentStack Orientation="Orientation.Vertical">
 
-                <button class="btn btn-primary w-100 py-2 btn-submit" type="submit" disabled=@loading>Sign In</button>
+                    @*
+                    Must use Name="Input.{Prop_name}" for fix InvalidOperationException:
+                    EditForm requires either a Model parameter, or an EditContext parameter, please provide one of these.
+                    *@
+                    <FluentTextField Name="Input.Username" @bind-Value="Input.Username" Required="true" Placeholder="username" Size="30">
+                        <FluentIcon Value="@(new Icons.Regular.Size16.Person())" Color="@Color.Neutral" Slot="start" />
+                    </FluentTextField>
+                    <FluentValidationMessage For="() => Input.Username" class="text-danger" />
+
+                    <FluentTextField Name="Input.Password" @bind-Value="Input.Password" Required="true" TextFieldType="TextFieldType.Password" Placeholder="password" Size="30">
+                        <FluentIcon Value="@(new Icons.Regular.Size16.Key())" Color="@Color.Neutral" Slot="start" />
+                    </FluentTextField>
+                    <FluentValidationMessage For="() => Input.Password" class="text-danger" />
+
+                    <FluentButton Type="ButtonType.Submit" Loading="loading" Appearance="Appearance.Accent" Style="width: 100%">Log in</FluentButton>
                 
-                <p class="mt-5 mb-3 text-body-secondary text-center">&copy; 2017–2024</p>
+                </FluentStack>
             </EditForm>
+        </FluentCard>
 
-        </div>
     </div>
-</div>
+
+</FluentStack>
 
 @code {
+    [SupplyParameterFromForm]
+    private InputModel Input { get; set; } = new();
+
+    [SupplyParameterFromQuery]
+    private string? ReturnUrl { get; set; }
+
+    private string? errorMessage;
+
+    private bool loading = false;
+
+
+    protected override void OnInitialized()
+    {
+        if (CurrentUser.IsAuthenticated)
+        {
+            IdentityRedirectManager.RedirectTo("/");
+        }
+    }
+
+    public async Task LoginSubmit()
+    {
+        var login = await LoginService.LoginAsync(Input.Username, Input.Password, Input.RememberMe);
+
+        if (login.Succeeded)
+        {
+            IdentityRedirectManager.RedirectTo(ReturnUrl);
+        }
+        else
+        {
+            errorMessage = "Error: Invalid login attempt.";
+        }
+    }
+
     private sealed class InputModel
     {
         [Required]
@@ -58,37 +97,5 @@
 
         [Display(Name = "Remember me?")]
         public bool RememberMe { get; set; }
-    }
-
-    [SupplyParameterFromForm]
-    private InputModel Input { get; set; } = new();
-
-    [SupplyParameterFromQuery]
-    private string? ReturnUrl { get; set; }
-
-    private string? errorMessage;
-
-    private bool loading = false;
-
-    public async Task LoginSubmit()
-    {
-        loading = true;
-
-        StateHasChanged();
-
-        var login = await LoginService.LoginAsync(Input.Username, Input.Password, Input.RememberMe);
-
-        if (login.Succeeded)
-        {
-            IdentityRedirectManager.RedirectTo(ReturnUrl);
-        }
-        else
-        {
-            errorMessage = "Error: Invalid login attempt.";
-        }
-
-        loading = false;
-
-        StateHasChanged();
     }
 }
