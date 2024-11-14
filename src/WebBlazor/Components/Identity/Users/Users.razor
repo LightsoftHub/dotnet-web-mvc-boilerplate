@@ -60,11 +60,18 @@
 
     private async Task LoadUsersAsync()
     {
-        userLoading = true;
+        ToggleTableState();
 
         users = (await UserService.GetAsync()).Data;
 
-        //userLoading = false;
+        ToggleTableState();
+    }
+
+    private void ToggleTableState()
+    {
+        userLoading = !userLoading;
+
+        StateHasChanged();
     }
 
     private bool FilterFunc(UserDto element)

@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HttpApi.Client", "src\HttpA
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApp", "src\WebApp\WebApp.csproj", "{5079BB12-EE0E-4E71-85AD-B1D406253149}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebBlazor", "WebBlazor\WebBlazor.csproj", "{10727F9E-CAF3-4294-B116-C017D09E4586}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebBlazor", "src\WebBlazor\WebBlazor.csproj", "{10727F9E-CAF3-4294-B116-C017D09E4586}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

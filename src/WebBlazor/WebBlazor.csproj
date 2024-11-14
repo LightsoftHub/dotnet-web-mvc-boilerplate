@@ -9,21 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Components\Account\Pages\Login.razor.js" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Components\Account\Pages\Login.razor.js" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="MudBlazor" Version="7.15.0" />
     <PackageReference Include="MudBlazor.ThemeManager" Version="2.1.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\HttpApi.Client\HttpApi.Client.csproj" />
-    <ProjectReference Include="..\src\Infrastructure.Auth\Infrastructure.Auth.csproj" />
+    <ProjectReference Include="..\HttpApi.Client\HttpApi.Client.csproj" />
+    <ProjectReference Include="..\Infrastructure.Auth\Infrastructure.Auth.csproj" />
   </ItemGroup>
 
 </Project>
