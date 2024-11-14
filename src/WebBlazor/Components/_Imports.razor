@@ -12,6 +12,8 @@
 @using Microsoft.AspNetCore.Authorization
 
 @using Microsoft.FluentUI.AspNetCore.Components
+@inject IToastService ToastService
+@inject IDialogService DialogService
 
 @attribute [Authorize]
 
@@ -20,8 +22,6 @@
 
 @using CleanArch.eCode.Shared.Authorization
 @using CleanArch.eCode.Infrastructure.Auth.Permissions
-@inject ICurrentUser CurrentUser
-
 @using CleanArch.eCode.WebBlazor.Infrastructure.Constants
 @using CleanArch.eCode.WebBlazor.Infrastructure.Services
 @using CleanArch.eCode.WebBlazor.Components
@@ -29,5 +29,6 @@
 @using CleanArch.eCode.WebBlazor.Components.Pages
 @using CleanArch.eCode.WebBlazor.Components.Shared
 @using CleanArch.eCode.WebBlazor.Components.Shared.Spinner
+@inject ICurrentUser CurrentUser
 @inject SpinnerService SpinnerService
 @inject FuncService ExecuteService

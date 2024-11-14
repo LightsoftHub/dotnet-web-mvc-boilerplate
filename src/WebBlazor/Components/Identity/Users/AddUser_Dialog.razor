@@ -1,21 +1,9 @@
-﻿@using Light.Identity
-@using Microsoft.FluentUI.AspNetCore.Components
-@using Icons = Microsoft.FluentUI.AspNetCore.Components.Icons
-@using Color = Microsoft.FluentUI.AspNetCore.Components.Color
-
-@implements IDialogContentComponent
-
-@inject UserHttpService UserHttpService
-@inject Microsoft.FluentUI.AspNetCore.Components.IToastService ToastService
-@inject Microsoft.FluentUI.AspNetCore.Components.IDialogService DialogService
+﻿@implements IDialogContentComponent
 
 <div class="mt-3">
-    <FluentTextField @bind-Value="@newUser.UserName" Size="20" Required>
+    <FluentTextField Size="20" ValueChanged=SearchDomainUserAsync Required>
         Username
-        <FluentIcon Value="@(new Icons.Regular.Size20.Search())"
-        Color="@Color.Neutral"
-        Slot="end"
-        OnClick="SearchDomainUserAsync" />
+        <FluentIcon Value="@(new Icons.Regular.Size20.Search())" Color="@Color.Neutral" Slot="end" />
     </FluentTextField>
 
     <FluentTextField @bind-Value="@newUser.Password" Size="textSize" Required>Password:</FluentTextField>
@@ -38,7 +26,7 @@
 </div>
 
 <FluentDialogFooter>
-    <FluentButton Appearance="Appearance.Accent" OnClick="AddNewUserAsync">Create</FluentButton>
+    <FluentButton Appearance="Appearance.Accent" OnClick=CreateNewUserAsync>Create</FluentButton>
 </FluentDialogFooter>
 
 
@@ -51,41 +39,32 @@
 
     private int textSize = 25;
 
-    public async Task SearchDomainUserAsync()
+    private async Task SearchDomainUserAsync(string username)
     {
-        if (!string.IsNullOrEmpty(newUser.UserName))
+        newUser.UserName = username;
+
+        if (string.IsNullOrEmpty(username))
+            return;
+
+        var getDomainUser = await UserService.GetDomainUserAsync(username);
+
+        if (getDomainUser.Succeeded)
         {
-            var getDomainUser = await UserHttpService.GetDomainUserAsync(newUser.UserName);
-
-            if (getDomainUser.Succeeded)
-            {
-                var domainUser = getDomainUser.Data;
-
-                newUser.FirstName = domainUser.FirstName;
-                newUser.LastName = domainUser.LastName;
-                newUser.PhoneNumber = domainUser.PhoneNumber;
-                newUser.Email = domainUser.Email;
-                newUser.UseDomainPassword = true;
-            }
-            else
-            {
-                ToastService.ShowError(getDomainUser.Message);
-            }
+            newUser.FirstName = getDomainUser.Data.FirstName;
+            newUser.LastName = getDomainUser.Data.LastName;
+            newUser.Email = getDomainUser.Data.Email;
+            newUser.PhoneNumber = getDomainUser.Data.PhoneNumber;
+            newUser.UseDomainPassword = true;
         }
     }
 
-    private async Task AddNewUserAsync()
+    private async Task CreateNewUserAsync()
     {
-        var create = await UserHttpService.CreateAsync(newUser);
+        var result = await ExecuteService.CallGuardedAsync(
+            () => UserService.CreateAsync(newUser),
+            $"New user {newUser.UserName} created");
 
-        if (create.Succeeded)
-        {
-            ToastService.ShowSuccess($"New user {newUser.UserName} created");
-            await Dialog.CloseAsync(create);
-        }
-        else
-        {
-            ToastService.ShowError(create.Message);
-        }
+        if (result.Succeeded)
+            await Dialog.CloseAsync(result);
     }
 }

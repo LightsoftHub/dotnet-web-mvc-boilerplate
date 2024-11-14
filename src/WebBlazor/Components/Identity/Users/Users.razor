@@ -1,19 +1,12 @@
-﻿@using Light.Identity
-
-@page "/users"
+﻿@page "/users"
 @attribute [MustHavePermission(Permissions.Users.View)]
-
-@inject UserHttpService UserHttpService
-@inject Microsoft.FluentUI.AspNetCore.Components.IToastService ToastService
-@inject Microsoft.FluentUI.AspNetCore.Components.IDialogService DialogService
 
 <PageHeader Title="Users" />
 
 <Card>
 
-    <FluentButton @onclick="@OpenAddUserDialogAsync"
-                    IconStart="@(new Icons.Regular.Size16.AddCircle())"
-                    Appearance="Appearance.Accent">
+    <FluentButton IconStart="@(new Icons.Regular.Size16.AddCircle())"
+                  Appearance="Appearance.Accent" @onclick="@OpenAddUserDialogAsync">
         Add new
     </FluentButton>
 
@@ -25,7 +18,8 @@
                         Pagination="@pagination"
                         HeaderCellAsButtonWithMenu="true"
                         Style="overflow: auto;min-width: 900px;"
-                        Loading="loading">
+                        Loading="loading"
+                        ShowHover="true">
 
             <Microsoft.FluentUI.AspNetCore.Components.PropertyColumn Property="@(c => c.UserName)" Sortable="true" Filtered="!string.IsNullOrWhiteSpace(nameFilter)" Tooltip="true" Title="Username">
                 <ColumnOptions>
@@ -96,15 +90,21 @@
 
     private async Task ReloadUserAsync()
     {
-        loading = true;
+        ToggleTableState();
 
-        var getUsers = await UserHttpService.GetAsync();
+        var getUsers = await UserService.GetAsync();
         if (getUsers.Succeeded)
         {
             users = getUsers.Data.AsQueryable();
         }
+        
+        ToggleTableState();
+    }
 
-        loading = false;
+    private void ToggleTableState()
+    {
+        loading = !loading;
+        StateHasChanged();
     }
 
     private void HandleCountryFilter(ChangeEventArgs args)
@@ -153,7 +153,7 @@
         var result = await dialog.Result;
         if (result.Cancelled is false)
         {
-            var deleteUser = await UserHttpService.DeleteAsync(id);
+            var deleteUser = await UserService.DeleteAsync(id);
             if (deleteUser.Succeeded)
             {
                 ToastService.ShowSuccess($"User {username} deleted");
