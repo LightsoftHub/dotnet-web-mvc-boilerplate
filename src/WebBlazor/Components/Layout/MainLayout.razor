@@ -5,11 +5,11 @@
 <FluentTooltipProvider />
 <FluentMessageBarProvider />
 <FluentMenuProvider />
+<FluentDesignTheme OfficeColor="OfficeColor.Teams" />
 
 <FluentLayout>
 
     <FluentHeader Class="siteheader" Style="color: black">
-        <FluentIcon Value="@(new Icons.Regular.Size24.Navigation())" OnClick="DrawerToggle" />
         AppName
         <UserMenu />
         <div class="settings">
@@ -21,8 +21,8 @@
 
         <SideNav Expanded="expanded" />
 
-        <FluentBodyContent Class="body-content" Style="max-width: 1800px">
-            <div class="content" style="justify-content: center">
+        <FluentBodyContent Class="body-content" style="justify-content: center">
+            <div class="content" style="max-width: 1150px">
                 @Body
             </div>
         </FluentBodyContent>

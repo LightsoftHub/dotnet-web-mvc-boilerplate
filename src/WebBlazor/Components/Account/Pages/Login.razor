@@ -43,7 +43,11 @@
                     <FluentValidationMessage For="() => Input.Password" class="text-danger" />
 
                     <FluentButton Type="ButtonType.Submit" Loading="loading" Appearance="Appearance.Accent" Style="width: 100%">Log in</FluentButton>
-                
+                    
+                    <FluentOverlay @bind-Visible=@loading Opacity="0.4" Alignment="Align.Center" Justification="JustifyContent.Center">
+                        <FluentProgressRing />
+                    </FluentOverlay>
+
                 </FluentStack>
             </EditForm>
         </FluentCard>
@@ -74,6 +78,9 @@
 
     public async Task LoginSubmit()
     {
+        loading = true;
+        StateHasChanged();
+
         var login = await LoginService.LoginAsync(Input.Username, Input.Password, Input.RememberMe);
 
         if (login.Succeeded)
@@ -84,6 +91,9 @@
         {
             errorMessage = "Error: Invalid login attempt.";
         }
+
+        loading = false;
+        StateHasChanged();
     }
 
     private sealed class InputModel

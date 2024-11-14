@@ -21,32 +21,42 @@
                         Loading="loading"
                         ShowHover="true">
 
-            <Microsoft.FluentUI.AspNetCore.Components.PropertyColumn Property="@(c => c.UserName)" Sortable="true" Filtered="!string.IsNullOrWhiteSpace(nameFilter)" Tooltip="true" Title="Username">
+            <PropertyColumn Property="@(c => c.UserName)" Sortable="true" Filtered="!string.IsNullOrWhiteSpace(nameFilter)" Tooltip="true" Title="Username">
                 <ColumnOptions>
                     <div class="search-box">
                         <FluentSearch Autofocus=true @bind-Value=nameFilter @oninput="HandleCountryFilter" @bind-Value:after="HandleClear" Placeholder="username..." Style="width: 100%;" Label="Filter" />
                     </div>
                 </ColumnOptions>
-            </Microsoft.FluentUI.AspNetCore.Components.PropertyColumn>
+            </PropertyColumn>
 
-            <Microsoft.FluentUI.AspNetCore.Components.PropertyColumn Title="Full Name" Property="@(c => $"{c.FirstName} {c.LastName}")" Sortable="false" />
+            <PropertyColumn Title="Full Name" Property="@(c => $"{c.FirstName} {c.LastName}")" Sortable="false" />
 
-            <Microsoft.FluentUI.AspNetCore.Components.PropertyColumn Property="@(c => c.Email)" Sortable="false" />
+            <PropertyColumn Property="@(c => c.Email)" Sortable="false" />
 
-            <Microsoft.FluentUI.AspNetCore.Components.PropertyColumn Property="@(c => c.PhoneNumber)" Sortable="false" />
+            <PropertyColumn Property="@(c => c.PhoneNumber)" Sortable="false" />
 
-            <Microsoft.FluentUI.AspNetCore.Components.TemplateColumn Title="Actions" Align="@Microsoft.FluentUI.AspNetCore.Components.Align.End">
+            <TemplateColumn Title="Status">
+
+                <span class="badge @(context.Status == IdentityStatus.active ? "text-bg-info" : "text-bg-warning")">@context.Status</span>
+
+            </TemplateColumn>
+
+            <TemplateColumn Title="Actions" Align="Align.End">
 
                 <FluentButton
-                    aria-label="Edit item"
+                    aria-label="Edit"
                     IconEnd="@(new Icons.Regular.Size16.Edit())" 
                     OnClick="@(() => NavigationManager.NavigateTo($"/user/{context.Id}"))"/>
 
-                <FluentButton aria-label="Delete item"
-                                IconEnd="@(new Icons.Regular.Size16.Delete())"
-                                OnClick="@(() => ShowDeleteWarningAsync(context.Id, context.UserName))" />
+                <FluentButton aria-label="Permissions"
+                    IconEnd="@(new Icons.Regular.Size16.ShieldAdd())"
+                    OnClick="() => OpenPanelRightAsync(context.Id, context.UserName)" />
 
-            </Microsoft.FluentUI.AspNetCore.Components.TemplateColumn>
+                <FluentButton aria-label="Delete"
+                    IconEnd="@(new Icons.Regular.Size16.Delete())"
+                    OnClick="@(() => ShowDeleteWarningAsync(context.Id, context.UserName))" />
+
+            </TemplateColumn>
         </FluentDataGrid>
 
     </div>
@@ -130,7 +140,7 @@
             Title = $"Create new user",
             PreventDismissOnOverlayClick = true,
             PreventScroll = true,
-            Width = "500px"
+            //Width = "500px"
         };
 
         var dialog = await DialogService.ShowDialogAsync<AddUser_Dialog>(parameters);
@@ -165,5 +175,18 @@
                 ToastService.ShowError(deleteUser.Message);
             }
         }
+    }
+
+    private async Task OpenPanelRightAsync(string id, string? username)
+    {
+        await DialogService.ShowPanelAsync<UpdateUserRoles_Panel>(id, new DialogParameters<string>()
+        {
+            Content = id,
+            Alignment = HorizontalAlignment.Right,
+            Title = $"{username} roles",
+            PrimaryAction = null,
+            SecondaryAction = null,
+            PreventDismissOnOverlayClick = true,
+        });
     }
 }
