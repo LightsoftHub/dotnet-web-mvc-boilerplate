@@ -44,11 +44,9 @@ public class UserHttpService(IHttpClientFactory httpClientFactory) :
 
     public Task<Result> ForcePasswordAsync(string id, string password)
     {
-        var url = $"{_path}/force_password";
+        var url = $"{_path}/{id}/force_password";
 
-        var request = new { id, password };
-
-        return TryPutAsync(url, request);
+        return TryPutAsync(url, password);
     }
 
     public Task<Result<UserDto>> GetDomainUserAsync(string username)

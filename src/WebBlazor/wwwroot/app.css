@@ -226,7 +226,3 @@ code {
         right: unset;
     }
 }
-
-.fluent-toast-provider {
-    z-index: 9999 !important;
-}

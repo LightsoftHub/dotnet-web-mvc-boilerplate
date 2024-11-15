@@ -1,7 +1,7 @@
-﻿@page "/users"
-@attribute [MustHavePermission(Permissions.Users.View)]
+﻿@page "/roles"
+@attribute [MustHavePermission(Permissions.Roles.View)]
 
-<PageHeader Title="Users" />
+<PageHeader Title="Roles" />
 
 <Card>
 
@@ -9,11 +9,9 @@
         Add new
     </FluentButton>
 
-    <FluentSearch Autofocus=true @bind-Value=nameFilter @oninput="HandleDataFilter" @bind-Value:after="HandleClear" Class="float-end" Placeholder="search..." />
-
     <div class="table-responsive mt-3">
 
-        <FluentDataGrid Items="@filteredUsers"
+        <FluentDataGrid Items="@filteredRoles"
                         ResizableColumns=true
                         ResizeType="DataGridResizeType.Discrete"
                         Pagination="@pagination"
@@ -22,19 +20,15 @@
                         Loading="loading"
                         ShowHover="true">
 
-            <PropertyColumn Property="@(c => c.UserName)" Sortable="true" Filtered="!string.IsNullOrWhiteSpace(nameFilter)" Tooltip="true" Title="Username" />
+            <PropertyColumn Property="@(c => c.Name)" Sortable="true" Filtered="!string.IsNullOrWhiteSpace(nameFilter)" Tooltip="true" Title="Name">
+                <ColumnOptions>
+                    <div class="search-box">
+                        <FluentSearch Autofocus=true @bind-Value=nameFilter @oninput="HandleDataFilter" @bind-Value:after="HandleClear" Placeholder="name..." Style="width: 100%;" Label="Filter" />
+                    </div>
+                </ColumnOptions>
+            </PropertyColumn>
 
-            <PropertyColumn Title="Full Name" Property="@(c => $"{c.FirstName} {c.LastName}")" Sortable="false" />
-
-            <PropertyColumn Property="@(c => c.Email)" Sortable="false" />
-
-            <PropertyColumn Property="@(c => c.PhoneNumber)" Sortable="false" />
-
-            <TemplateColumn Title="Status">
-
-                <span class="badge @(context.Status == IdentityStatus.active ? "text-bg-info" : "text-bg-warning")">@context.Status</span>
-
-            </TemplateColumn>
+            <PropertyColumn Title="Description" Property="@(c => c.Description)" Sortable="false" />
 
             <TemplateColumn Title="Actions" Align="Align.End">
 
@@ -43,13 +37,9 @@
                     IconEnd="@(new Icons.Regular.Size16.Edit())" 
                     OnClick="@(() => NavigationManager.NavigateTo($"/user/{context.Id}"))"/>
 
-                <FluentButton aria-label="Permissions"
-                    IconEnd="@(new Icons.Regular.Size16.ShieldAdd())"
-                    OnClick="() => OpenPanelRightAsync(context.Id, context.UserName)" />
-
                 <FluentButton aria-label="Delete"
                     IconEnd="@(new Icons.Regular.Size16.Delete())"
-                    OnClick="@(() => ShowDeleteWarningAsync(context.Id, context.UserName))" />
+                    OnClick="@(() => ShowDeleteWarningAsync(context.Id, context.Name))" />
 
             </TemplateColumn>
         </FluentDataGrid>
@@ -61,7 +51,7 @@
 </Card>
 
 @code {
-    private IQueryable<UserDto>? users;
+    private IQueryable<RoleDto>? roles;
 
     private PaginationState pagination = new PaginationState { ItemsPerPage = WebSettings.ItemsPerPage };
 
@@ -69,15 +59,15 @@
 
     private bool loading = false;
 
-    IQueryable<UserDto>? filteredUsers
+    IQueryable<RoleDto>? filteredRoles
     {
         get
         {
-            var result = users;
+            var result = roles;
 
             if (result is not null && !string.IsNullOrEmpty(nameFilter))
             {
-                result = result.Where(c => c.UserName!.Contains(nameFilter, StringComparison.CurrentCultureIgnoreCase));
+                result = result.Where(c => c.Name!.Contains(nameFilter, StringComparison.CurrentCultureIgnoreCase));
             }
 
             return result;
@@ -86,19 +76,19 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await ReloadUserAsync();
+        await ReloadDataAsync();
     }
 
-    private async Task ReloadUserAsync()
+    private async Task ReloadDataAsync()
     {
         ToggleTableState();
 
-        var getUsers = await UserService.GetAsync();
+        var getUsers = await RoleService.GetAsync();
         if (getUsers.Succeeded)
         {
-            users = getUsers.Data.AsQueryable();
+            roles = getUsers.Data.AsQueryable();
         }
-        
+
         ToggleTableState();
     }
 
@@ -128,13 +118,13 @@
     {
         DialogParameters parameters = new()
         {
-            Title = $"Create new user",
+            Title = $"Create new role",
             PreventDismissOnOverlayClick = true,
             PreventScroll = true,
             //Width = "500px"
         };
 
-        var dialog = await DialogService.ShowDialogAsync<AddUser_Dialog>(parameters);
+        var dialog = await DialogService.ShowDialogAsync<AddRole_Dialog>(parameters);
         DialogResult? dialogResult = await dialog.Result;
 
         if (!dialogResult.Cancelled && dialogResult.Data != null)
@@ -143,38 +133,26 @@
 
             if (result.Succeeded)
             {
-                await ReloadUserAsync();
+                await ReloadDataAsync();
             }
         }
     }
 
-    private async Task ShowDeleteWarningAsync(string id, string? username)
+    private async Task ShowDeleteWarningAsync(string id, string? name)
     {
-        var dialog = await DialogService.ShowWarningAsync($"Are you sure you want to delete {username}?");
+        var dialog = await DialogService.ShowWarningAsync($"Are you sure you want to delete {name}?");
         var result = await dialog.Result;
         if (result.Cancelled is false)
         {
-            var deleteUser = await ExecuteService.CallGuardedAsync(
+            var delete = await ExecuteService.CallGuardedAsync(
                 () => UserService.DeleteAsync(id),
-                $"User {username} deleted");
+                $"Role {name} deleted"
+            );
 
-            if (deleteUser.Succeeded)
+            if (delete.Succeeded)
             {
-                await ReloadUserAsync();
+                await ReloadDataAsync();
             }
         }
-    }
-
-    private async Task OpenPanelRightAsync(string id, string? username)
-    {
-        await DialogService.ShowPanelAsync<UpdateUserRoles_Panel>(id, new DialogParameters<string>()
-        {
-            Content = id,
-            Alignment = HorizontalAlignment.Right,
-            Title = $"{username} roles",
-            PrimaryAction = null,
-            SecondaryAction = null,
-            PreventDismissOnOverlayClick = true,
-        });
     }
 }

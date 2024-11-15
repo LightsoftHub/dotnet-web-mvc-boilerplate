@@ -10,7 +10,7 @@
 <FluentLayout>
 
     <FluentHeader Class="siteheader" Style="color: black">
-        AppName
+        @WebSettings.CompanyName
         <UserMenu />
         <div class="settings">
             
@@ -21,7 +21,7 @@
 
         <SideNav Expanded="expanded" />
 
-        <FluentBodyContent Class="body-content" style="justify-content: center">
+        <FluentBodyContent Class="body-content justify-content-center">
             <div class="content" style="max-width: 1150px">
                 @Body
             </div>
@@ -30,9 +30,9 @@
     </FluentStack>
 
     <FluentFooter>
-        <a href="https://www.fluentui-blazor.net" target="_blank">Documentation and demos</a>
+        <a href="#" target="_blank">@WebSettings.AppName</a>
         <FluentSpacer />
-        <a href="https://learn.microsoft.com/en-us/aspnet/core/blazor" target="_blank">About Blazor</a>
+        <a href="#" target="_blank">© 2024 @WebSettings.CompanyName</a>
     </FluentFooter>
 
 </FluentLayout>
