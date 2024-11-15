@@ -9,4 +9,19 @@
     min-height: 450px;
 }
 
+.page-link {
+    color: var(--accent-fill-rest) !important;
+    box-shadow: unset !important;
+}
+
+    .page-link:focus {
+        background-color: unset !important;
+    }
+
+.active > .page-link, .page-link.active {
+    color: var(--foreground-on-accent-active) !important;
+    background-color: var(--accent-fill-rest) !important;
+    border-color: unset;
+}
+
 

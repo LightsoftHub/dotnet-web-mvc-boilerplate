@@ -28,6 +28,12 @@
         await GoToPageAsync(notificationLookup);
     }
 
+    protected override bool ShouldRender()
+    {
+        // Only render if the parent state changed
+        return true;
+    }
+
     private async Task GoToPageAsync(IPage page)
     {
         notificationLookup.PageSize = 5;
