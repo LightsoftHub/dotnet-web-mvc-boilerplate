@@ -142,7 +142,7 @@
         var result = await dialog.Result;
         if (result.Cancelled is false)
         {
-            var delete = await ExecuteService.CallGuardedAsync(
+            await ExecuteService.CallGuardedAsync(
                 () => RoleService.DeleteAsync(id),
                 $"Role {name} deleted",
                 () => ReloadDataAsync());

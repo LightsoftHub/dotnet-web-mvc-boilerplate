@@ -108,8 +108,6 @@
     [Required]
     private string resetPassword { get; set; } = "";
 
-    private bool processing = false;
-
     protected override async Task OnInitializedAsync()
     {
         var getUserDetails = await UserService.GetByIdAsync(Id);
@@ -123,16 +121,8 @@
         }
     }
 
-    private void ToggleProcessStatus()
-    {
-        processing = !processing;
-        StateHasChanged();
-    }
-
     private async Task OnUpdateUserAsync()
     {
-        ToggleProcessStatus();
-
         var result = await ExecuteService.CallGuardedAsync(
             () => UserService.UpdateAsync(user),
             $"Update profile for user {user.UserName} success"
@@ -142,8 +132,6 @@
         {
             user = (await UserService.GetByIdAsync(user.Id)).Data;
         }
-
-        ToggleProcessStatus();
     }
 
     private async Task OnResetPasswordAsync()
@@ -160,8 +148,6 @@
             return;
         }
 
-        ToggleProcessStatus();
-
         var changePassword = await ExecuteService.CallGuardedAsync(
             () => UserService.ForcePasswordAsync(user.Id, resetPassword),
             $"Change password for user {user.UserName} success");
@@ -170,7 +156,5 @@
         {
             resetPassword = "";
         }
-
-        ToggleProcessStatus();
     }
 }
