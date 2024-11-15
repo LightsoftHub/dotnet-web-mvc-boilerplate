@@ -9,6 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\js\CacheStorageAccessor.js" />
+    <Content Remove="wwwroot\js\highlight-extensions.js" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Components\Account\Pages\Login.razor.js" />
   </ItemGroup>
 
@@ -25,6 +30,11 @@
   <ItemGroup>
     <ProjectReference Include="..\HttpApi.Client\HttpApi.Client.csproj" />
     <ProjectReference Include="..\Infrastructure.Auth\Infrastructure.Auth.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\js\CacheStorageAccessor.js" />
+    <None Include="wwwroot\js\highlight-extensions.js" />
   </ItemGroup>
 
 </Project>

@@ -11,7 +11,7 @@
         <PropertyColumn Property="@(p => p.CreatedOn)" />
     </FluentDataGrid>
 
-    <Pagination PagedInfo=pageInfo OnPageChanged=GoToPageAsync />
+    <Pagination PagedInfo=pageInfo OnPageNoChanged=GoToPageAsync />
 
 </Card>
 
@@ -24,21 +24,11 @@
 
     protected override async Task OnInitializedAsync()
     {
-        notificationLookup.Page = 9;
-        await GoToPageAsync(notificationLookup);
+        await GoToPageAsync(1);
     }
 
-    protected override bool ShouldRender()
+    private async Task LoadDataAsync()
     {
-        // Only render if the parent state changed
-        return true;
-    }
-
-    private async Task GoToPageAsync(IPage page)
-    {
-        notificationLookup.PageSize = 5;
-        notificationLookup.Page = page.Page;
-        
         var getEntries = await NotificationService.GetAsync(notificationLookup);
 
         if (getEntries.Succeeded)
@@ -46,5 +36,11 @@
             pageInfo = getEntries.PagedInfo;
             notifications = getEntries.Data.AsQueryable();
         }
+    }
+
+    private async Task GoToPageAsync(int page)
+    {
+        notificationLookup.Page = page;
+        await LoadDataAsync();
     }
 }

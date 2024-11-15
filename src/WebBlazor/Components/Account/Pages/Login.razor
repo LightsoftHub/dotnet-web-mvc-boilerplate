@@ -42,6 +42,8 @@
                     </FluentTextField>
                     <FluentValidationMessage For="() => Input.Password" class="text-danger" />
 
+                    <FluentCheckbox Name="Input.RememberMe" @bind-Value="@Input.RememberMe">Remember</FluentCheckbox>
+
                     <FluentButton Type="ButtonType.Submit" Loading="loading" Appearance="Appearance.Accent" Style="width: 100%">Log in</FluentButton>
                     
                     <FluentOverlay @bind-Visible=@loading Opacity="0.4" Alignment="Align.Center" Justification="JustifyContent.Center">

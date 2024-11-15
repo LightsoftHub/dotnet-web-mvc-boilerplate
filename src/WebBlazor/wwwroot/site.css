@@ -1,3 +1,12 @@
+:root {
+    --card-height: auto;
+}
+
+.body-content {
+    height: unset !important;
+    margin-bottom: 20px !important;
+}
+
 /* fix Toastr display behind modal overlay */
 .fluent-toast-provider {
     z-index: 9999 !important;
@@ -8,20 +17,4 @@
     min-width: 900px;
     min-height: 450px;
 }
-
-.page-link {
-    color: var(--accent-fill-rest) !important;
-    box-shadow: unset !important;
-}
-
-    .page-link:focus {
-        background-color: unset !important;
-    }
-
-.active > .page-link, .page-link.active {
-    color: var(--foreground-on-accent-active) !important;
-    background-color: var(--accent-fill-rest) !important;
-    border-color: unset;
-}
-
 

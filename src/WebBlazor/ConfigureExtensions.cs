@@ -1,6 +1,7 @@
 using CleanArch.eCode.HttpApi.Client;
 using CleanArch.eCode.Infrastructure.Auth;
 using CleanArch.eCode.WebBlazor.Components.Account;
+using CleanArch.eCode.WebBlazor.Components.Shared.Settings;
 using CleanArch.eCode.WebBlazor.Components.Shared.Spinner;
 using CleanArch.eCode.WebBlazor.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -22,6 +23,8 @@ public static class ServicesExtension
         services.AddHttpServices(assemblies);
 
         services.AddAuth();
+
+        services.AddFluentUIDemoServices();
 
         services.AddScoped<FuncService>();
         services.AddScoped<SpinnerService>();

@@ -2,13 +2,12 @@
 
 <AuthorizeView>
     <Authorized>
-        <FluentStack HorizontalAlignment="@HorizontalAlignment.End" VerticalAlignment="@VerticalAlignment.Center">
-            <FluentProfileMenu Initials="@CurrentUser.UserName?.First().ToString().ToUpper()">
-                <StartTemplate>
-                    @CurrentUser.FirstName @CurrentUser.LastName
-                </StartTemplate>
-                <HeaderTemplate>
-                    <FluentLabel Typo="@Typography.Header">@WebSettings.CompanyName</FluentLabel>
+        <FluentProfileMenu Initials="@CurrentUser.UserName?.First().ToString().ToUpper()">
+            <StartTemplate>
+                @CurrentUser.FirstName @CurrentUser.LastName
+            </StartTemplate>
+            <HeaderTemplate>
+                <FluentLabel Typo="@Typography.Header">@WebSettings.CompanyName</FluentLabel>
                 </HeaderTemplate>
                 <ChildContent>
                     <FluentPersona Name="@CurrentUser.FullName"
@@ -36,7 +35,6 @@
                     </FluentStack>
                 </FooterTemplate>
             </FluentProfileMenu>
-        </FluentStack>
         <form method="post" hidden>
             <AntiforgeryToken />
         </form>

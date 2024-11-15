@@ -12,11 +12,19 @@
     <Spinner />
 
     <FluentHeader Class="siteheader" Style="color: black">
+
         @WebSettings.CompanyName
-        <UserMenu />
-        <div class="settings">
-            
-        </div>
+
+        <FluentStack HorizontalAlignment="@HorizontalAlignment.End" VerticalAlignment="@VerticalAlignment.Center">
+
+            <div class="settings">
+                <CleanArch.eCode.WebBlazor.Components.Shared.Settings.SiteSettings />
+            </div>
+
+            <UserMenu />
+
+        </FluentStack>
+        
     </FluentHeader>
 
     <FluentStack Class="main" Orientation="Orientation.Horizontal">
