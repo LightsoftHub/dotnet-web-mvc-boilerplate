@@ -1,0 +1,44 @@
+@page "/notifications"
+
+<PageHeader Title="Notifications" />
+
+<Card>
+
+    <FluentDataGrid Items="@notifications" ShowHover="true">
+        <PropertyColumn Property="@(p => p.FromName)" />
+        <PropertyColumn Property="@(p => p.Title)" />
+        <PropertyColumn Property="@(p => p.Message)" />
+        <PropertyColumn Property="@(p => p.CreatedOn)" />
+    </FluentDataGrid>
+
+    <Pagination PagedInfo=pageInfo OnPageChanged=GoToPageAsync />
+
+</Card>
+
+@code {
+    private PagedInfo? pageInfo { get; set; }
+
+    private NotificationLookup notificationLookup = new();
+
+    private IQueryable<NotificationDto>? notifications;
+
+    protected override async Task OnInitializedAsync()
+    {
+        notificationLookup.Page = 9;
+        await GoToPageAsync(notificationLookup);
+    }
+
+    private async Task GoToPageAsync(IPage page)
+    {
+        notificationLookup.PageSize = 5;
+        notificationLookup.Page = page.Page;
+        
+        var getEntries = await NotificationService.GetAsync(notificationLookup);
+
+        if (getEntries.Succeeded)
+        {
+            pageInfo = getEntries.PagedInfo;
+            notifications = getEntries.Data.AsQueryable();
+        }
+    }
+}

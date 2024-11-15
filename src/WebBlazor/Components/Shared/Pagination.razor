@@ -1,0 +1,134 @@
+﻿@using Light.Contracts
+
+@if (PagedInfo != null)
+{
+    int currentPage = PagedInfo.Page;
+
+    int totalPages = PagedInfo.TotalPages;
+
+    int previousPage = currentPage > 1 ? currentPage - 1 : 1;
+
+    int nextPage = currentPage == totalPages ? totalPages : currentPage + 1;
+
+    // get first page before ...
+    var fromPage = Math.Max(1, currentPage - pagesOnLeft);
+
+    // get last page after ...
+    var toPage = Math.Min(totalPages, currentPage + pagesOnRight);
+    toPage = totalPages - toPage == 1 ? totalPages : toPage;
+    
+    <div class="row mt-3">
+        <div class="col-sm-4">
+            <div>
+                Page <input id="jump-to-page" @onchange=JumpToPage value="@currentPage" /> of <b>@PagedInfo.TotalPages</b>
+            </div>
+            <small>Total <b>@PagedInfo.TotalRecords</b> records</small>
+        </div>
+        <div class="col-sm-8">
+            <ul class="pagination pagination-sm justify-content-end">
+                <li class="page-item">
+                    <a class="page-link" href="javascript:void(0)" @onclick="() => GoToPage(previousPage)">
+                        <span aria-hidden="true">«</span>
+                    </a>
+                </li>
+
+                @if (fromPage > 1)
+                {
+                    // view First page
+                    <li class="page-item">
+                        <a class="page-link" href="javascript:void(0)" @onclick="() => GoToPage(1)">1</a>
+                    </li>
+                    if (fromPage > 2)
+                    {
+                        // view first ...
+                        // calculate number page for link ..., it's middle between first page and fromPage
+                        <li class="page-item">
+                            <a class="page-link" href="javascript:void(0)">...</a>
+                        </li>
+                    }
+                }
+
+                @for (int i = fromPage; i <= toPage; i++)
+                {
+                    var a = 1;
+                    
+                    // view paginator between currentPage
+                    <li class="page-item @(currentPage == i ? "active" : "")">
+                        <a class="page-link" href="javascript:void(0)" @onclick="() => GoToPage(i - 1)">@i</a>
+                    </li>
+                }
+
+                @if (toPage < totalPages)
+                {
+                    // view second ...
+                    <li class="page-item">
+                        <a class="page-link" href="javascript:void(0)">...</a>
+                    </li>
+                    // view last page
+                    if (toPage < totalPages - 1)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="javascript:void(0)" @onclick="() => GoToPage(totalPages)">@totalPages</a>
+                        </li>
+                    }
+                }
+
+                <li class="page-item">
+                    <a class="page-link" href="javascript:void(0)" @onclick="() => GoToPage(nextPage)">
+                        <span aria-hidden="true">»</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+}
+
+<style>
+    #jump-to-page {
+        background-color: #FFFFFF;
+        background-image: none;
+        border: 1px solid #e5e6e7;
+        border-radius: 1px;
+        color: inherit;
+        width: 50px;
+        font-weight: bold;
+    }
+
+        #jump-to-page::-webkit-inner-spin-button,
+        #jump-to-page::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+</style>
+
+@code {
+    [Parameter]
+    public PagedInfo PagedInfo { get; set; } = default!;
+
+    [Parameter]
+    public EventCallback<IPage> OnPageChanged { get; set; }
+
+    // How many pages views left & right from currentPage
+    const int pagesOnLeft = 3;
+    const int pagesOnRight = 3;
+
+    private async Task GoToPage(int page)
+    {
+        if (page == PagedInfo.Page || page < 1 || page > PagedInfo.TotalPages)
+            return;
+
+        PagedInfo.Page = page;
+
+        await OnPageChanged.InvokeAsync(PagedInfo);
+    }
+
+    private async Task JumpToPage(ChangeEventArgs e)
+    {
+        var tryGetPage = int.TryParse(e.Value?.ToString(), out var page);
+
+        if (tryGetPage)
+        {
+            await GoToPage(page);
+        }
+    }
+}
