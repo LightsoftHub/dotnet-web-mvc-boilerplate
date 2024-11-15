@@ -5,7 +5,7 @@
 
 <Card>
 
-    <FluentButton IconStart="@(new Icons.Regular.Size16.AddCircle())" Appearance="Appearance.Accent" @onclick="@OpenAddUserDialogAsync">
+    <FluentButton IconStart="@(new Icons.Regular.Size16.AddCircle())" Appearance="Appearance.Accent" @onclick="@OpenCreateDialogAsync">
         Add new
     </FluentButton>
 
@@ -124,7 +124,7 @@
         }
     }
 
-    private async Task OpenAddUserDialogAsync()
+    private async Task OpenCreateDialogAsync()
     {
         DialogParameters parameters = new()
         {
@@ -150,18 +150,14 @@
 
     private async Task ShowDeleteWarningAsync(string id, string? username)
     {
-        var dialog = await DialogService.ShowWarningAsync($"Are you sure you want to delete {username}?");
+        var dialog = await DialogService.ShowWarningAsync($"Are you sure you want to delete user {username}?");
         var result = await dialog.Result;
         if (result.Cancelled is false)
         {
-            var deleteUser = await ExecuteService.CallGuardedAsync(
+            await ExecuteService.CallGuardedAsync(
                 () => UserService.DeleteAsync(id),
-                $"User {username} deleted");
-
-            if (deleteUser.Succeeded)
-            {
-                await ReloadUserAsync();
-            }
+                $"User {username} deleted",
+                () => ReloadUserAsync());
         }
     }
 

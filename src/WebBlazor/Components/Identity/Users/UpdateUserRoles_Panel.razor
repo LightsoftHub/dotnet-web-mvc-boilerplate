@@ -2,10 +2,12 @@
 
 <FluentDialogBody>
 
-    @foreach (var role in userRoles)
-    {
-        <FluentCheckbox @bind-Value="role.IsOwned" Label="@role.RoleName" />
-    }
+    <FluentStack Orientation="Orientation.Vertical">
+        @foreach (var role in userRoles)
+        {
+            <FluentCheckbox @bind-Value="role.IsOwned" Label="@role.RoleName" />
+        }
+    </FluentStack>
 
     <div class="mt-3 text-end">
         <FluentButton Type="ButtonType.Submit"
@@ -59,9 +61,8 @@
 
         user.Roles = rolesWillUpdate;
 
-        var result = await ExecuteService.CallGuardedAsync(
+        await ExecuteService.CallGuardedAsync(
             () => UserService.UpdateAsync(user),
-            $"Update profile for user {user.UserName} success"
-        );
+            $"Update profile for user {user.UserName} success");
     }
 }

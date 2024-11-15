@@ -78,9 +78,6 @@
 
     public async Task LoginSubmit()
     {
-        loading = true;
-        StateHasChanged();
-
         var login = await LoginService.LoginAsync(Input.Username, Input.Password, Input.RememberMe);
 
         if (login.Succeeded)
@@ -91,9 +88,6 @@
         {
             errorMessage = "Error: Invalid login attempt.";
         }
-
-        loading = false;
-        StateHasChanged();
     }
 
     private sealed class InputModel

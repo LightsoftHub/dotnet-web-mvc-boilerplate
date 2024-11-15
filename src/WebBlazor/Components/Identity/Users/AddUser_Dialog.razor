@@ -26,7 +26,7 @@
 </div>
 
 <FluentDialogFooter>
-    <FluentButton Appearance="Appearance.Accent" OnClick=CreateNewUserAsync>Create</FluentButton>
+    <FluentButton Appearance="Appearance.Accent" OnClick=CreateAsync>Create</FluentButton>
 </FluentDialogFooter>
 
 
@@ -58,13 +58,11 @@
         }
     }
 
-    private async Task CreateNewUserAsync()
+    private async Task CreateAsync()
     {
-        var result = await ExecuteService.CallGuardedAsync(
+        await ExecuteService.CallGuardedAsync(
             () => UserService.CreateAsync(newUser),
-            $"New user {newUser.UserName} created");
-
-        if (result.Succeeded)
-            await Dialog.CloseAsync(result);
+            $"New user {newUser.UserName} created",
+            Dialog);
     }
 }

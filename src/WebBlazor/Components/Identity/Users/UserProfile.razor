@@ -69,12 +69,15 @@
                              IconStart="@(new Icons.Regular.Size16.Save())">Update</FluentButton>
                     </div>
 
-                 </EditForm>
+                </EditForm>
+
              </Card>
         </div>
 
         <div class="col-sm-4 col-lg-3">
+
             <Card>
+
                 <EditForm Model="@resetPassword" OnValidSubmit=OnResetPasswordAsync FormName="resetPasswordForm">
 
                     <FluentTextField Name="resetPassword" @bind-Value="resetPassword" TextFieldType="TextFieldType.Password" Label="Password" Required />
@@ -86,9 +89,12 @@
                             IconStart="@(new Icons.Regular.Size16.Key())">Reset</FluentButton>
                     </div>
 
-                 </EditForm>
+                </EditForm>
+
              </Card>
+
         </div>
+
     </div>
 }
 
@@ -101,6 +107,8 @@
     [SupplyParameterFromForm]
     [Required]
     private string resetPassword { get; set; } = "";
+
+    private bool processing = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -115,8 +123,16 @@
         }
     }
 
+    private void ToggleProcessStatus()
+    {
+        processing = !processing;
+        StateHasChanged();
+    }
+
     private async Task OnUpdateUserAsync()
     {
+        ToggleProcessStatus();
+
         var result = await ExecuteService.CallGuardedAsync(
             () => UserService.UpdateAsync(user),
             $"Update profile for user {user.UserName} success"
@@ -126,6 +142,8 @@
         {
             user = (await UserService.GetByIdAsync(user.Id)).Data;
         }
+
+        ToggleProcessStatus();
     }
 
     private async Task OnResetPasswordAsync()
@@ -142,16 +160,17 @@
             return;
         }
 
-        await ExecuteService.CallGuardedAsync(
+        ToggleProcessStatus();
+
+        var changePassword = await ExecuteService.CallGuardedAsync(
             () => UserService.ForcePasswordAsync(user.Id, resetPassword),
-            $"Change password for user {user.UserName} success"
-        );
+            $"Change password for user {user.UserName} success");
 
-        var result = await UserService.ForcePasswordAsync(user.Id, resetPassword);
-
-        if (result.Succeeded)
+        if (changePassword.Succeeded)
         {
             resetPassword = "";
         }
+
+        ToggleProcessStatus();
     }
 }
