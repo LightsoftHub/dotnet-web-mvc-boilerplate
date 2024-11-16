@@ -1,0 +1,34 @@
+﻿@using CleanArch.eCode.HttpApi.Client.Identity
+@inject NotificationHttpService NotificationService
+
+<FluentCounterBadge Count="@unreadCount" BackgroundColor="@Color.Error" Color="Color.Fill">
+    <FluentButton BackgroundColor="var(--neutral-layer-4)">
+        <FluentIcon Value="@(new Icons.Regular.Size20.Alert())" Color="@Color.Neutral" Class="@animate" />
+    </FluentButton>
+</FluentCounterBadge>
+
+@code {
+    private int unreadCount = 0;
+
+    private string animate = "animated swing infinite";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var accessToken = CurrentUser.AccessToken;
+
+        await CountUnreadAsync();
+    }
+
+    private async Task CountUnreadAsync()
+    {
+        var currentUserId = CurrentUser.UserId;
+
+        if (string.IsNullOrEmpty(currentUserId))
+            return;
+
+        unreadCount = (await NotificationService.CountUnreadAsync(currentUserId)).Data;
+
+        if (unreadCount == 0)
+            animate = "";
+    }
+}

@@ -2,9 +2,11 @@
 
 public abstract class WebSettings
 {
-    public const string AppName = "CleanUI";
+    public const string APP_NAME = "CleanUI";
 
-    public const string CompanyName = "Lightsoft";
+    public const string COMPANY_NAME = "Lightsoft";
+
+    public const string THEME_STORAGE_NAME = "theme";
 
     public const string LoginPath = "/account/login";
 

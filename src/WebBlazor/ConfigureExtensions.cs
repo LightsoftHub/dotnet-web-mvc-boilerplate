@@ -28,6 +28,7 @@ public static class ServicesExtension
 
         services.AddScoped<FuncService>();
         services.AddScoped<SpinnerService>();
+        //services.AddSingleton<SignalRClientService>();
 
         return services;
     }

@@ -9,19 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="wwwroot\js\CacheStorageAccessor.js" />
-    <Content Remove="wwwroot\js\highlight-extensions.js" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="Components\Account\Pages\Login.razor.js" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Components\Account\Pages\Login1.razor.js" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.10.4" />
     <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Emoji" Version="4.6.0" />
     <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.10.4" />
@@ -30,11 +17,6 @@
   <ItemGroup>
     <ProjectReference Include="..\HttpApi.Client\HttpApi.Client.csproj" />
     <ProjectReference Include="..\Infrastructure.Auth\Infrastructure.Auth.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="wwwroot\js\CacheStorageAccessor.js" />
-    <None Include="wwwroot\js\highlight-extensions.js" />
   </ItemGroup>
 
 </Project>

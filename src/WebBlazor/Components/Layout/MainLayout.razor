@@ -5,21 +5,23 @@
 <FluentTooltipProvider />
 <FluentMessageBarProvider />
 <FluentMenuProvider />
-<FluentDesignTheme OfficeColor="OfficeColor.Teams" StorageName="theme" />
+<FluentDesignTheme OfficeColor="OfficeColor.Teams" StorageName="@WebSettings.THEME_STORAGE_NAME" />
 
 <FluentLayout>
 
     <Spinner />
 
-    <FluentHeader Class="siteheader" Style="color: black">
+    <FluentHeader Class="siteheader">
 
-        @WebSettings.CompanyName
+        @WebSettings.COMPANY_NAME
 
         <FluentStack HorizontalAlignment="@HorizontalAlignment.End" VerticalAlignment="@VerticalAlignment.Center">
 
             <div class="settings">
                 <CleanArch.eCode.WebBlazor.Components.Shared.Settings.SiteSettings />
             </div>
+
+            <UserNotification />
 
             <UserMenu />
 
@@ -40,9 +42,9 @@
     </FluentStack>
 
     <FluentFooter>
-        <a href="#" target="_blank">@WebSettings.AppName</a>
+        <a href="#" target="_blank">@WebSettings.APP_NAME</a>
         <FluentSpacer />
-        <a href="#" target="_blank">© 2024 @WebSettings.CompanyName</a>
+        <a href="#" target="_blank">© 2024 @WebSettings.COMPANY_NAME</a>
     </FluentFooter>
 
 </FluentLayout>

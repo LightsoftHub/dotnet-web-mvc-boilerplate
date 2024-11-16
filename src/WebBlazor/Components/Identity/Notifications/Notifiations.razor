@@ -4,19 +4,29 @@
 
 <Card Class="mb-3">
     
-    <FluentAutocomplete TOption="UserDto"
-                        AutoComplete="off"
-                        Autofocus="true"
-                        Width="250px"
-                        Placeholder="Select user"
-                        MaximumSelectedOptions="1"
-                        OptionText="@(item => item.UserName)"
-                        OnOptionsSearch="@OnSearchAsync"
-                        @bind-SelectedOptions="@SelectedUsers" />
+    <FluentAutocomplete
+        TOption="UserDto"
+        AutoComplete="off"
+        Autofocus="true"
+        Width="250px"
+        Placeholder="Select user"
+        MaximumSelectedOptions="1"
+        OptionText="@(item => item.UserName)"
+        OnOptionsSearch="@OnSearchAsync"
+        @bind-SelectedOptions="@selectedUsers" />
 
     <div class="mt-2">
-        <FluentButton IconStart="@(new Icons.Regular.Size20.Search())" OnClick=LoadDataAsync>
+        <FluentButton
+            IconStart="@(new Icons.Regular.Size16.Search())"
+            OnClick=LoadDataAsync>
             Search
+        </FluentButton>
+
+        <FluentButton
+            IconStart="@(new Icons.Regular.Size16.AddCircle())"
+            Appearance="Appearance.Accent"
+            OnClick=OpenPushDialogAsync>
+            Push
         </FluentButton>
     </div>
 
@@ -40,9 +50,7 @@
 
     private IQueryable<NotificationDto>? notifications;
 
-    private IEnumerable<UserDto>? SelectedUsers { get; set; }
-
-    private UserDto? SelectedUser;
+    private IEnumerable<UserDto>? selectedUsers { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -51,7 +59,7 @@
 
     private async Task LoadDataAsync()
     {
-        notificationLookup.ToUser = SelectedUsers?.FirstOrDefault()?.Id;
+        notificationLookup.ToUser = selectedUsers?.FirstOrDefault()?.Id;
 
         var getEntries = await NotificationService.GetAsync(notificationLookup);
 
@@ -80,5 +88,28 @@
         e.Items = getUsers.Data
             .Where(i => i.UserName!.StartsWith(e.Text, StringComparison.OrdinalIgnoreCase))
             .OrderBy(i => i.UserName);
+    }
+
+    private async Task OpenPushDialogAsync()
+    {
+        DialogParameters parameters = new()
+        {
+            Title = $"Push message",
+            PreventDismissOnOverlayClick = true,
+            PreventScroll = true,
+        };
+
+        var dialog = await DialogService.ShowDialogAsync<PushNotification_Dialog>(parameters);
+        DialogResult? dialogResult = await dialog.Result;
+
+        if (!dialogResult.Cancelled && dialogResult.Data != null)
+        {
+            var result = (Result)dialogResult.Data;
+
+            if (result.Succeeded)
+            {
+                await GoToPageAsync(1);
+            }
+        }
     }
 }

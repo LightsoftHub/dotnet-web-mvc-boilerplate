@@ -2,6 +2,10 @@
     --card-height: auto;
 }
 
+.siteheader {
+    color: var(--neutral-foreground-rest) !important
+}
+
 .body-content {
     height: unset !important;
     margin-bottom: 20px !important;
