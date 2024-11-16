@@ -2,8 +2,27 @@
 
 <PageHeader Title="Notifications" />
 
-<Card>
+<Card Class="mb-3">
+    
+    <FluentAutocomplete TOption="UserDto"
+                        AutoComplete="off"
+                        Autofocus="true"
+                        Width="250px"
+                        Placeholder="Select user"
+                        MaximumSelectedOptions="1"
+                        OptionText="@(item => item.UserName)"
+                        OnOptionsSearch="@OnSearchAsync"
+                        @bind-SelectedOptions="@SelectedUsers" />
 
+    <div class="mt-2">
+        <FluentButton IconStart="@(new Icons.Regular.Size20.Search())" OnClick=LoadDataAsync>
+            Search
+        </FluentButton>
+    </div>
+
+</Card>
+
+<Card>
     <FluentDataGrid Items="@notifications" ShowHover="true">
         <PropertyColumn Property="@(p => p.FromName)" />
         <PropertyColumn Property="@(p => p.Title)" />
@@ -12,7 +31,6 @@
     </FluentDataGrid>
 
     <Pagination PagedInfo=pageInfo OnPageNoChanged=GoToPageAsync />
-
 </Card>
 
 @code {
@@ -22,6 +40,10 @@
 
     private IQueryable<NotificationDto>? notifications;
 
+    private IEnumerable<UserDto>? SelectedUsers { get; set; }
+
+    private UserDto? SelectedUser;
+
     protected override async Task OnInitializedAsync()
     {
         await GoToPageAsync(1);
@@ -29,6 +51,8 @@
 
     private async Task LoadDataAsync()
     {
+        notificationLookup.ToUser = SelectedUsers?.FirstOrDefault()?.Id;
+
         var getEntries = await NotificationService.GetAsync(notificationLookup);
 
         if (getEntries.Succeeded)
@@ -42,5 +66,19 @@
     {
         notificationLookup.Page = page;
         await LoadDataAsync();
+    }
+
+    private async Task OnSearchAsync(OptionsSearchEventArgs<UserDto> e)
+    {
+        var getUsers = await UserService.GetAsync();
+
+        if (getUsers.Succeeded is false)
+        {
+            return;
+        }
+
+        e.Items = getUsers.Data
+            .Where(i => i.UserName!.StartsWith(e.Text, StringComparison.OrdinalIgnoreCase))
+            .OrderBy(i => i.UserName);
     }
 }
