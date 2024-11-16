@@ -77,7 +77,7 @@
 
             if (result is not null && !string.IsNullOrEmpty(nameFilter))
             {
-                result = result.Where(c => c.UserName!.Contains(nameFilter, StringComparison.CurrentCultureIgnoreCase));
+                result = result.Where(c => c.UserName.Contains(nameFilter, StringComparison.CurrentCultureIgnoreCase));
             }
 
             return result;

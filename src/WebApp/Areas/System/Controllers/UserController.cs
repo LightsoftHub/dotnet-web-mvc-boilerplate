@@ -32,9 +32,9 @@ public class UserController(
         if (!string.IsNullOrEmpty(search))
         {
             users = users.Where(x =>
-                x.UserName!.Contains(search)
-                //|| x.FirstName!.Contains(search)
-                //|| x.LastName!.Contains(search)
+                x.UserName.Contains(search)
+                || x.FirstName.Contains(search)
+                || x.LastName.Contains(search)
                 ).ToList();
         }
 
