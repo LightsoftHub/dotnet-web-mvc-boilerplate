@@ -5,7 +5,7 @@ namespace CleanArch.eCode.HttpApi.Client.Identity;
 public class NotificationHttpService(IHttpClientFactory httpClientFactory) :
     TryHttpClient(httpClientFactory)
 {
-    private const string _path = "api/v1/signalr";
+    private const string _path = "api/v1/notification";
 
     public Task<PagedResult<NotificationDto>> GetAsync(NotificationLookup request)
     {

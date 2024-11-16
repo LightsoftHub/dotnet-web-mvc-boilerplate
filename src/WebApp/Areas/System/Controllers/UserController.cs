@@ -33,8 +33,9 @@ public class UserController(
         {
             users = users.Where(x =>
                 x.UserName!.Contains(search)
-                || x.FirstName!.Contains(search)
-                || x.LastName!.Contains(search)).ToList();
+                //|| x.FirstName!.Contains(search)
+                //|| x.LastName!.Contains(search)
+                ).ToList();
         }
 
         var response = users.Select(x => new SelectItem(x.Id, $"[{x.UserName}] - {x.LastName} {x.FirstName}")).ToList();
