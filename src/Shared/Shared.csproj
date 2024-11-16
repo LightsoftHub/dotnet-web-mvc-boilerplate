@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 	<RootNamespace>CleanArch.eCode.Shared</RootNamespace>
@@ -11,7 +11,7 @@
   <ItemGroup>
 	<PackageReference Include="FluentValidation" Version="11.10.0" />
 	<PackageReference Include="Mapster" Version="7.4.0" />
-	<PackageReference Include="Lightsoft.Extensions" Version="0.0.0.5" />
+	<PackageReference Include="Lightsoft.Extensions" Version="0.0.0.6" />
 	<PackageReference Include="Lightsoft.Identity" Version="0.0.0.3" />
 	<PackageReference Include="Lightsoft.Result" Version="0.0.0.4" />
   </ItemGroup>

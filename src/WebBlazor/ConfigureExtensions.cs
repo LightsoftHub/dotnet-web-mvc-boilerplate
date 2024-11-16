@@ -28,6 +28,7 @@ public static class ServicesExtension
 
         services.AddScoped<FuncService>();
         services.AddScoped<SpinnerService>();
+
         //services.AddSingleton<SignalRClientService>();
 
         return services;
@@ -70,7 +71,7 @@ public static class ServicesExtension
         return services;
     }
 
-    public static IApplicationBuilder ConfigurePipelines(this IApplicationBuilder builder, IConfiguration configuration) =>
+    public static IApplicationBuilder ConfigurePipelines(this IApplicationBuilder builder) =>
     builder
         .UseRouting()
         .UseAuthentication()

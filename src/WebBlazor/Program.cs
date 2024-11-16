@@ -27,7 +27,7 @@ app.UseStatusCodePagesWithRedirects("/error");
 
 app.UseHttpsRedirection();
 
-app.ConfigurePipelines(builder.Configuration);
+app.ConfigurePipelines();
 
 app.UseStaticFiles();
 app.UseAntiforgery();
