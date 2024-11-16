@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.SignalR.Client;
+﻿using CleanArch.eCode.Shared.Notifications;
+using Microsoft.AspNetCore.SignalR.Client;
 using System.Text.Json.Serialization;
 
 namespace CleanArch.eCode.WebBlazor.Infrastructure.Services;
@@ -22,11 +23,6 @@ public class SignalRClientService
                 options.Transports = Microsoft.AspNetCore.Http.Connections.HttpTransportType.LongPolling;
             })
             .WithAutomaticReconnect()
-            .AddJsonProtocol(options =>
-            {
-                options.PayloadSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.Never;
-                // Custom protocol configuration
-            })
             .ConfigureLogging(logging =>
             {
                 logging.AddConsole(); // Add console logging
@@ -37,7 +33,7 @@ public class SignalRClientService
         await _hubConnection.StartAsync();
 
         // Listen for incoming messages
-        _hubConnection.On("server-notification", () =>
+        _hubConnection.On(NotificationConstants.SERVER_NOTIFICATION, () =>
         {
             OnMessageReceived?.Invoke();
         });
