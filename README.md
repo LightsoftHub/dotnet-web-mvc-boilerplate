@@ -1,11 +1,18 @@
-# Frontend Boilerplate for ASP.NET Core
+# Frontend Boilerplate
 
-## With 2 .NET 9 Templates
+> [!NOTE]
+> Please use backend api from [CleanArchitechture](https://github.com/LightsoftHub/CleanArchitecture) project
+
+## Getting Started
+
+The following prerequisites are required to build and run the solution:
+
+- [.NET 9.0 SDK](https://dotnet.microsoft.com/download/dotnet/9.0) (latest version)
+
+## 2 Templates
 
 * Web MVC
 * Fluent Blazor Server
-
-Please use backend api from [CleanArchitechture](https://github.com/LightsoftHub/CleanArchitecture) project
 
 ## Features
 
