@@ -20,7 +20,7 @@
         var accessToken = CurrentUser.AccessToken;
 
         // Connect to the SignalR hub with the token
-        await SignalRClientService.ConnectAsync("http://10.114.1.21:7111/signalr-hub", accessToken);
+        await SignalRClientService.ConnectAsync(accessToken);
 
         // Listen for incoming messages
         SignalRClientService.OnMessageReceived += async () =>

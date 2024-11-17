@@ -1,18 +1,19 @@
 ﻿using CleanArch.eCode.Shared.Notifications;
 using Microsoft.AspNetCore.SignalR.Client;
-using System.Text.Json.Serialization;
 
 namespace CleanArch.eCode.WebBlazor.Infrastructure.Services;
 
-public class SignalRClientService
+public class SignalRClientService(ISettings settings)
 {
     private HubConnection? _hubConnection;
 
     public event Action? OnMessageReceived;
 
-    public async Task ConnectAsync(string hubUrl, string? accessToken)
+    public async Task ConnectAsync(string? accessToken)
     {
         if (_hubConnection != null) return;
+
+        var hubUrl = settings.GetSignalRUrl();
 
         Task<string?> AccessTokenProvider() => Task.FromResult(accessToken);
 

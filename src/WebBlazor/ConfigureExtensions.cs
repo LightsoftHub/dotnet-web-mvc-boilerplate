@@ -30,6 +30,7 @@ public static class ServicesExtension
         services.AddScoped<SpinnerService>();
 
         services.AddSingleton<SignalRClientService>();
+        services.AddSingleton<ISettings, WebConfiguration>();
 
         return services;
     }
