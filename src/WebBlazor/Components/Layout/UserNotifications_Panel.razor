@@ -12,7 +12,7 @@
 
     <Card Class="@css">
 
-        <FluentLabel Typo="Typography.H4">@entry.Title</FluentLabel>
+        <FluentLabel Typo="Typography.H5">@entry.Title</FluentLabel>
 
         <div class="mt-2">
             @entry.Message
@@ -58,7 +58,7 @@
 
     private async Task ReadEntryAsync(string id)
     {
-        await NotificationService.GetByIdAsync(id);
+        await NotificationService.ReadAsync(id);
         await LoadNotificationsAsync();
     }
 }

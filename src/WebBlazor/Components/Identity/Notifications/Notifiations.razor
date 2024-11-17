@@ -2,10 +2,11 @@
 
 <PageHeader Title="Notifications" />
 
-<Card Class="mb-3">
-    
-    <FluentAutocomplete
-        TOption="UserDto"
+@if (CurrentUser.HasPermission(Permissions.System.Notification))
+{
+    <Card Class="mb-3">
+
+        <FluentAutocomplete TOption="UserDto"
         AutoComplete="off"
         Autofocus="true"
         Width="250px"
@@ -15,22 +16,21 @@
         OnOptionsSearch="@OnSearchAsync"
         @bind-SelectedOptions="@selectedUsers" />
 
-    <div class="mt-2">
-        <FluentButton
-            IconStart="@(new Icons.Regular.Size16.Search())"
+        <div class="mt-2">
+            <FluentButton IconStart="@(new Icons.Regular.Size16.Search())"
             OnClick=LoadDataAsync>
-            Search
-        </FluentButton>
+                Search
+            </FluentButton>
 
-        <FluentButton
-            IconStart="@(new Icons.Regular.Size16.AddCircle())"
+            <FluentButton IconStart="@(new Icons.Regular.Size16.AddCircle())"
             Appearance="Appearance.Accent"
             OnClick=OpenPushDialogAsync>
-            Push
-        </FluentButton>
-    </div>
+                Push
+            </FluentButton>
+        </div>
 
-</Card>
+    </Card>
+}
 
 <Card>
     <FluentDataGrid Items="@notifications" ShowHover="true">
@@ -59,7 +59,9 @@
 
     private async Task LoadDataAsync()
     {
-        notificationLookup.ToUser = selectedUsers?.FirstOrDefault()?.Id;
+        var searchById = selectedUsers?.FirstOrDefault()?.Id ?? CurrentUser.UserId;
+
+        notificationLookup.ToUser = searchById;
 
         var getEntries = await NotificationService.GetAsync(notificationLookup);
 
