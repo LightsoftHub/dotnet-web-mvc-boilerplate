@@ -21,6 +21,13 @@ public class UserHttpService(IHttpClientFactory httpClientFactory) :
         return TryGetAsync<UserDto>(url);
     }
 
+    public Task<string> ExportAsync()
+    {
+        var url = $"{_path}/export";
+
+        return DownloadAsBase64Async(url);
+    }
+
     public Task<Result> CreateAsync(CreateUserRequest request)
     {
         var url = _path;

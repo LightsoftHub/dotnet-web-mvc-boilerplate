@@ -29,6 +29,13 @@ public class NotificationHttpService(IHttpClientFactory httpClientFactory) :
         return TryGetAsync<int>(url);
     }
 
+    public Task<Result<NotificationDto>> ReadAsync(string id)
+    {
+        var url = $"{_path}/read/{id}";
+
+        return TryGetAsync<NotificationDto>(url);
+    }
+
     public Task<Result> CreateAsync(SystemMessage message)
     {
         var url = $"{_path}";

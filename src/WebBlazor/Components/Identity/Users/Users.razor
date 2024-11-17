@@ -1,12 +1,17 @@
 ﻿@page "/users"
+@using Light.Extensions
 @attribute [MustHavePermission(Permissions.Users.View)]
 
 <PageHeader Title="Users" />
 
 <Card>
 
-    <FluentButton IconStart="@(new Icons.Regular.Size16.AddCircle())" Appearance="Appearance.Accent" @onclick="@OpenCreateDialogAsync">
+    <FluentButton IconStart="@(new Icons.Regular.Size16.AddCircle())" Appearance="Appearance.Accent" Onclick="OpenCreateDialogAsync">
         Add new
+    </FluentButton>
+
+    <FluentButton IconStart="@(new Icons.Regular.Size16.ArrowDownload())" Onclick="ExportAsync">
+        Export
     </FluentButton>
 
     <FluentSearch Autofocus=true @bind-Value=nameFilter @oninput="HandleDataFilter" @bind-Value:after="HandleClear" Class="float-end" Placeholder="search..." />
@@ -98,7 +103,7 @@
         {
             users = getUsers.Data.AsQueryable();
         }
-        
+
         ToggleTableState();
     }
 
@@ -172,5 +177,12 @@
             SecondaryAction = null,
             PreventDismissOnOverlayClick = true,
         });
+    }
+
+    private async Task ExportAsync()
+    {
+        var file = await UserService.ExportAsync();
+
+        await JSRuntime.InvokeVoidAsync("downloadFromStream", "Users.xlsx", file);
     }
 }

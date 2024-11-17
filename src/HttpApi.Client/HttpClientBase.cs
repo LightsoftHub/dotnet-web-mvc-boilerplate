@@ -33,4 +33,18 @@ public abstract class HttpClientBase(IHttpClientFactory httpClientFactory)
 
         return client;
     }
+
+    protected async Task<Stream> DownloadFileAsync(string url)
+    {
+        return await (await HttpClient.GetAsync(url)).ReadFileAsync();
+    }
+
+    protected async Task<string> DownloadAsBase64Async(string url)
+    {
+        var file = await DownloadFileAsync(url);
+
+        var base64Content = file.ToBase64String();
+        
+        return base64Content;
+    }
 }
