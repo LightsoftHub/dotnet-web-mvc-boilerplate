@@ -1,0 +1,151 @@
+﻿@page "/roles"
+@attribute [MustHavePermission(Permissions.Roles.View)]
+
+<PageHeader Title="Roles" />
+
+<Card>
+
+    <FluentButton IconStart="@(new Icons.Regular.Size16.AddCircle())" Appearance="Appearance.Accent" @onclick="@OpenCreateDialogAsync">
+        Add new
+    </FluentButton>
+
+    <div class="mt-3">
+
+        <FluentDataGrid Items="@filteredRoles"
+                        ResizableColumns=true
+                        ResizeType="DataGridResizeType.Discrete"
+                        Pagination="@pagination"
+                        HeaderCellAsButtonWithMenu="true"
+                        Loading="loading"
+                        ShowHover="true">
+
+            <PropertyColumn Property="@(c => c.Name)" Sortable="true" Filtered="!string.IsNullOrWhiteSpace(nameFilter)" Tooltip="true" Title="Name">
+                <ColumnOptions>
+                    <div class="search-box">
+                        <FluentSearch Autofocus=true @bind-Value=nameFilter @oninput="HandleDataFilter" @bind-Value:after="HandleClear" Placeholder="name..." Style="width: 100%;" Label="Filter" />
+                    </div>
+                </ColumnOptions>
+            </PropertyColumn>
+
+            <PropertyColumn Title="Description" Property="@(c => c.Description)" Sortable="false" />
+
+            <TemplateColumn Title="Actions" Align="Align.End">
+
+                <FluentButton
+                    aria-label="Edit"
+                    IconEnd="@(new Icons.Regular.Size16.Edit())" 
+                    OnClick="@(() => NavigationManager.NavigateTo($"/user/{context.Id}"))"/>
+
+                <FluentButton aria-label="Delete"
+                    IconEnd="@(new Icons.Regular.Size16.Delete())"
+                    OnClick="@(() => ShowDeleteWarningAsync(context.Id, context.Name))" />
+
+            </TemplateColumn>
+        </FluentDataGrid>
+
+    </div>
+
+    <FluentPaginator State="@pagination" />
+
+</Card>
+
+@code {
+    private IQueryable<RoleDto>? roles;
+
+    private PaginationState pagination = new PaginationState { ItemsPerPage = WebSettings.ItemsPerPage };
+
+    string nameFilter = string.Empty;
+
+    private bool loading = false;
+
+    IQueryable<RoleDto>? filteredRoles
+    {
+        get
+        {
+            var result = roles;
+
+            if (result is not null && !string.IsNullOrEmpty(nameFilter))
+            {
+                result = result.Where(c => c.Name.Contains(nameFilter, StringComparison.CurrentCultureIgnoreCase));
+            }
+
+            return result;
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ReloadDataAsync();
+    }
+
+    private async Task ReloadDataAsync()
+    {
+        ToggleTableState();
+
+        var getUsers = await RoleService.GetAsync();
+        if (getUsers.Succeeded)
+        {
+            roles = getUsers.Data.AsQueryable();
+        }
+
+        ToggleTableState();
+    }
+
+    private void ToggleTableState()
+    {
+        loading = !loading;
+        StateHasChanged();
+    }
+
+    private void HandleDataFilter(ChangeEventArgs args)
+    {
+        if (args.Value is string value)
+        {
+            nameFilter = value;
+        }
+    }
+
+    private void HandleClear()
+    {
+        if (string.IsNullOrWhiteSpace(nameFilter))
+        {
+            nameFilter = string.Empty;
+        }
+    }
+
+    private async Task OpenCreateDialogAsync()
+    {
+        DialogParameters parameters = new()
+        {
+            Title = $"Create new role",
+            PreventDismissOnOverlayClick = true,
+            PreventScroll = true,
+        };
+
+        var dialog = await DialogService.ShowDialogAsync<AddRole_Dialog>(parameters);
+        DialogResult? dialogResult = await dialog.Result;
+
+        if (!dialogResult.Cancelled && dialogResult.Data != null)
+        {
+            var result = (Result)dialogResult.Data;
+
+            if (result.Succeeded)
+            {
+                await ReloadDataAsync();
+            }
+        }
+    }
+
+    private async Task ShowDeleteWarningAsync(string id, string? name)
+    {
+        var dialog = await DialogService.ShowWarningAsync($"Are you sure you want to delete role {name}?");
+        var result = await dialog.Result;
+        if (result.Cancelled is false)
+        {
+            await ExecuteService.CallGuardedAsync(
+                () => RoleService.DeleteAsync(id),
+                $"Role {name} deleted",
+                () => ReloadDataAsync());
+        }
+    }
+}

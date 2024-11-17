@@ -1,0 +1,68 @@
+﻿@implements IDialogContentComponent<string>
+
+<FluentDialogBody>
+
+    <FluentStack Orientation="Orientation.Vertical">
+        @foreach (var role in userRoles)
+        {
+            <FluentCheckbox @bind-Value="role.IsOwned" Label="@role.RoleName" />
+        }
+    </FluentStack>
+
+    <div class="mt-3 text-end">
+        <FluentButton Type="ButtonType.Submit"
+            Appearance="Appearance.Accent"
+            IconStart="@(new Icons.Regular.Size16.Save())"
+            OnClick=UpdateUserRolesAsync>Assign</FluentButton>
+    </div>
+
+</FluentDialogBody>
+
+@code {
+    [Parameter]
+    public string Content { get; set; } = default!;
+
+    private UserDto user { get; set; } = default!;
+
+    private sealed class UserRolesVm
+    {
+        public string RoleName { get; set; } = null!;
+
+        public bool IsOwned { get; set; }
+    }
+
+    private List<UserRolesVm> userRoles { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var getUserDetails = await UserService.GetByIdAsync(Content);
+        if (getUserDetails.Succeeded)
+        {
+            user = getUserDetails.Data;
+        }
+
+        var roles = await RoleService.GetAsync();
+
+        foreach (var role in roles.Data)
+        {
+            var isOwned = user.Roles.Any(x => x == role.Name);
+
+            userRoles.Add(new UserRolesVm
+            {
+                RoleName = role.Name,
+                IsOwned = isOwned
+            });
+        }
+    }
+
+    private async Task UpdateUserRolesAsync()
+    {
+        var rolesWillUpdate = userRoles.Where(x => x.IsOwned).Select(s => s.RoleName);
+
+        user.Roles = rolesWillUpdate;
+
+        await ExecuteService.CallGuardedAsync(
+            () => UserService.UpdateAsync(user),
+            $"Update profile for user {user.UserName} success");
+    }
+}

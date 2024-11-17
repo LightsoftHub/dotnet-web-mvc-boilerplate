@@ -1,0 +1,96 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - @WebUIConstants.WEB_NAME</title>
+
+    <!-- Add local styles, mostly for plugins css file -->
+    @if (IsSectionDefined("Styles"))
+    {
+        @await RenderSectionAsync("Styles", required: false)
+    }
+
+    <link rel="stylesheet" href="~/able/fonts/inter/inter.css" id="main-font-link" />
+    <!-- [Tabler Icons] https://tablericons.com -->
+    <link rel="stylesheet" href="~/able/fonts/tabler-icons.min.css">
+    <!-- [Feather Icons] https://feathericons.com -->
+    <link rel="stylesheet" href="~/able/fonts/feather.css">
+    <!-- [Font Awesome Icons] https://fontawesome.com/icons -->
+    <link rel="stylesheet" href="~/able/fonts/fontawesome.css">
+    <!-- [Material Icons] https://fonts.google.com/icons -->
+    <link rel="stylesheet" href="~/able/fonts/material.css">
+
+    <!-- [Theme] -->
+    <link rel="stylesheet" href="~/able/css/style.css" id="main-style-link">
+    <link rel="stylesheet" href="~/able/css/style-preset.css">
+    <link rel="stylesheet" href="~/able/css/white-theme.css">
+    <link rel="stylesheet" href="~/able/css/site.css">
+
+    <!-- [Libs] -->
+    <link rel="stylesheet" href="~/lib/toastr/toastr.min.css" />
+    <link rel="stylesheet" href="~/lib/animate/animate.css">
+    <link rel="stylesheet" href="~/lib/pace/themes/green/pace-theme-minimal.css" />
+
+    <!-- Loader -->
+    <link rel="stylesheet" href="~/lib/spinner/spinner.css">
+
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    @*<link rel="stylesheet" href="~/WebApp.styles.css" asp-append-version="true" />*@
+</head>
+<body data-pc-preset="@WebUIConstants.ABLE_PRESET" data-pc-sidebar-caption="true" data-pc-direction="ltr" data-pc-theme_contrast="" data-pc-theme="light">
+
+    <!-- Loader -->
+    <partial name="_PreLoader" />
+    <partial name="_Loader" />
+
+    <partial name="_Sidebar" />
+
+    <partial name="_Topbar" />
+
+    <!-- [ Main Content ] start -->
+    <div class="pc-container">
+        <div class="pc-content">
+            @RenderBody()
+        </div>
+    </div>
+    <!-- [ Main Content ] end -->
+
+    <partial name="_Footer" />
+
+    <s-modal />
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
+
+    <!-- [Libs] -->
+    <script src="~/lib/toastr/toastr.min.js"></script>
+    <script src="~/lib/pace/pace.min.js"></script>
+
+    <!-- [Theme] -->
+    <script src="~/able/js/plugins/popper.min.js"></script>
+    <script src="~/able/js/plugins/simplebar.min.js"></script>
+    <script src="~/able/js/plugins/bootstrap.min.js"></script>
+    <script src="~/able/js/fonts/custom-font.js"></script>
+    <script src="~/able/js/pcoded.js"></script>
+    <script src="~/able/js/plugins/feather.min.js"></script>
+    <script src="~/able/js/plugins/sweetalert2.all.min.js"></script>
+    <script src="~/able/js/site.js"></script>
+
+    <!-- Loader -->
+    <script src="~/lib/spinner/spinner.js"></script>
+
+    <!-- [Site] -->
+    <script src="~/js/common.js"></script>
+    <script src="~/js/ajax-data.js"></script>
+    <script src="~/js/notify-http.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+    @*<partial name="EventEffects\_Snow" />*@
+    @*<partial name="EventEffects\_Fireworks" />*@
+    @*<partial name="EventEffects\_SpringFlower" />*@
+</body>
+</html>

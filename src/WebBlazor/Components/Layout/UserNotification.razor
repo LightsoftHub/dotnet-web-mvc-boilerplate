@@ -1,0 +1,58 @@
+﻿@using CleanArch.eCode.HttpApi.Client.Identity
+@inject NotificationHttpService NotificationService
+@inject SignalRClientService SignalRClientService
+
+<FluentCounterBadge Count="@unreadCount" BackgroundColor="@Color.Error" Color="Color.Fill">
+    <FluentButton BackgroundColor="var(--neutral-layer-4)" OnClick="OpenUserNotificationsPanelAsync">
+        <FluentIcon Value="@(new Icons.Regular.Size20.Alert())" Color="@Color.Neutral" Class="@animate" />
+    </FluentButton>
+</FluentCounterBadge>
+
+@code {
+    private int unreadCount = 0;
+
+    private string animate = "animated swing infinite";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CountUnreadAsync();
+
+        var accessToken = CurrentUser.AccessToken;
+
+        // Connect to the SignalR hub with the token
+        await SignalRClientService.ConnectAsync(accessToken);
+
+        // Listen for incoming messages
+        SignalRClientService.OnMessageReceived += async () =>
+        {
+            await CountUnreadAsync();
+            await InvokeAsync(StateHasChanged);
+
+            ToastService.ShowEvent("New notification");
+        };
+    }
+
+    private async Task CountUnreadAsync()
+    {
+        var currentUserId = CurrentUser.UserId;
+
+        if (string.IsNullOrEmpty(currentUserId))
+            return;
+
+        unreadCount = (await NotificationService.CountUnreadAsync(currentUserId)).Data;
+
+        if (unreadCount == 0)
+            animate = "";
+    }
+
+    private async Task OpenUserNotificationsPanelAsync()
+    {
+        await DialogService.ShowPanelAsync<UserNotifications_Panel>(new DialogParameters<string>()
+        {
+            Alignment = HorizontalAlignment.Right,
+            Title = "Notifications",
+            PrimaryAction = null,
+            SecondaryAction = null,
+        });
+    }
+}

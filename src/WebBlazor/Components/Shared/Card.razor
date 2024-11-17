@@ -1,0 +1,20 @@
+﻿<div class="card @Class">
+    <div class="card-body">
+        @ChildContent
+    </div>
+</div>
+
+<style type="text/css">
+    .card {
+        background: var(--fill-color);
+        color: var(--neutral-foreground-rest);
+    }
+</style>
+
+@code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; } = default!;
+
+    [Parameter]
+    public string? Class { get; set; }
+}

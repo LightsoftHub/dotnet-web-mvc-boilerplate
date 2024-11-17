@@ -1,0 +1,210 @@
+﻿@model UserDto
+
+@{
+    ViewData["Title"] = "User Details";
+}
+
+<div class="row animated fadeInRight">
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-body py-0">
+                <ul class="nav nav-tabs profile-tabs" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="profile-tab-1" data-bs-toggle="tab" href="#profile-1" role="tab"
+                           aria-selected="true">
+                            <i class="ti ti-user me-2"></i>Profile
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="profile-tab-2" data-bs-toggle="tab" href="#profile-2" role="tab"
+                           aria-selected="true">
+                            <i class="ti ti-lock me-2"></i>Change Password
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="tab-content">
+            <div class="tab-pane show active" id="profile-1" role="tabpanel" aria-labelledby="profile-tab-1">
+                <div class="row">
+                    <div class="col-lg-4 col-xxl-3">
+                        <div class="card">
+                            <div class="card-body position-relative">
+                                <div class="position-absolute end-0 top-0 p-3">
+                                    @if (Model.IsDeleted)
+                                    {
+                                        <span class="badge bg-danger">deleted</span>
+                                    }
+                                    else if (Model.UseDomainPassword)
+                                    {
+                                        <span class="badge bg-primary">AD</span>
+                                    }
+                                </div>
+                                <div class="text-center mt-3">
+                                    <div class="chat-avtar d-inline-flex mx-auto">
+                                        <img class="rounded-circle img-fluid wid-70" src="~/images/no-image.png"
+                                             alt="User image">
+                                    </div>
+                                    <h5 class="mb-0">@Model.FirstName @Model.LastName</h5>
+                                    <p class="text-muted text-sm">@Model.UserName</p>
+                                    <hr class="my-3 border border-secondary-subtle">
+                                    <div class="row g-3">
+                                        <div class="col-4">
+                                            <h5 class="mb-0">--</h5>
+                                            <small class="text-muted">Post</small>
+                                        </div>
+                                        <div class="col-4 border border-top-0 border-bottom-0">
+                                            <h5 class="mb-0">--</h5>
+                                            <small class="text-muted">Project</small>
+                                        </div>
+                                        <div class="col-4">
+                                            <h5 class="mb-0">--</h5>
+                                            <small class="text-muted">Members</small>
+                                        </div>
+                                    </div>
+                                    <hr class="my-3 border border-secondary-subtle">
+                                    <div class="d-inline-flex align-items-center justify-content-start w-100 mb-3">
+                                        <i class="ti ti-mail me-2"></i>
+                                        <p class="mb-0">@Model.Email</p>
+                                    </div>
+                                    <div class="d-inline-flex align-items-center justify-content-start w-100 mb-3">
+                                        <i class="ti ti-phone me-2"></i>
+                                        <p class="mb-0">@Model.PhoneNumber</p>
+                                    </div>
+                                    <div class="d-inline-flex align-items-center justify-content-start w-100 mb-3">
+                                        <i class="ti ti-map-pin me-2"></i>
+                                        <p class="mb-0">Viet Nam</p>
+                                    </div>
+                                    <div class="d-inline-flex align-items-center justify-content-start w-100">
+                                        <i class="ti ti-link me-2"></i>
+                                        <a href="https://watsons.vn" class="link-primary" target="_blank">
+                                            <p class="mb-0">https://watsons.vn</p>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-8 col-xxl-9">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Personal Details</h5>
+                            </div>
+                            <div class="card-body">
+                                <p class="mb-0">
+                                    <form ajax asp-action="Update" asp-route-id="@Model.Id" autocomplete="off">
+                                        <div class="row mb-3">
+                                            <div class="col-md-12 col-lg-12 col-xl-6">
+                                                <div class="form-group">
+                                                    <label asp-for="FirstName" class="form-label"></label>
+                                                    <input asp-for="FirstName" class="form-control" placeholder="First Name">
+                                                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-12 col-lg-12 col-xl-6">
+                                                <div class="form-group">
+                                                    <label asp-for="LastName" class="form-label"></label>
+                                                    <input asp-for="LastName" class="form-control" placeholder="Last Name">
+                                                    <span asp-validation-for="LastName" class="text-danger"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <div class="col-md-12 col-lg-12 col-xl-6">
+                                                <div class="form-group">
+                                                    <label asp-for="PhoneNumber" class="form-label"></label>
+                                                    <input asp-for="PhoneNumber" class="form-control" placeholder="Phone Number">
+                                                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12 col-lg-12 col-xl-6">
+                                                <div class="form-group">
+                                                    <label asp-for="Email" class="form-label"></label>
+                                                    <input asp-for="Email" class="form-control" placeholder="Email">
+                                                    <span asp-validation-for="Email" class="text-danger"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <div class="col-md-12 col-lg-12 col-xl-6">
+                                                <div class="form-group">
+                                                    <label asp-for="Status" class="form-label"></label>
+                                                    <select asp-for="Status" asp-items="Html.GetEnumSelectList<IdentityStatus>()" class="form-select"></select>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group mb-3">
+                                            <div class="row row-sm">
+                                                <div class="col-md-3">
+                                                    <label class="form-label">Settings</label>
+                                                </div>
+                                                <div class="col-md-9">
+                                                    <div class="form-switch">
+                                                        <input asp-for="UseDomainPassword" type="checkbox" class="form-check-input input-primary">
+                                                        <label class="form-check-label">Use Domain Password</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="border-top mb-3"></div>
+
+                                        <div class="form-group mb-3">
+                                            <div class="row row-sm">
+                                                <div class="col-md-3">
+                                                    <label class="form-label">Roles</label>
+                                                </div>
+                                                <div class="col-md-9">
+                                                    <div class="custom-controls-stacked">
+                                                        <partial name="_UserRolesPartial" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="border-top mb-3"></div>
+
+                                        <div class="text-end btn-page">
+                                            <btn-submit>Update</btn-submit>
+                                        </div>
+                                    </form>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                 </div>
+            </div>
+            <div class="tab-pane" id="profile-2" role="tabpanel" aria-labelledby="profile-tab-2">
+                <div class="row">
+                    <div class="col-lg-6 col-xxl-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Change Password</h5>
+                            </div>
+                            <form ajax asp-action="ForcePassword" asp-route-id="@Model.Id" autocomplete="off">
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <input id="Password" name="Password" class="form-control" type="password" placeholder="New Password">
+                                    </div>
+                                </div>
+                                <div class="card-footer text-end btn-page">
+                                    <btn-submit>Change</btn-submit>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+

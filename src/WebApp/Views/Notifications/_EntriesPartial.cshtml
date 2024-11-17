@@ -1,0 +1,39 @@
+﻿@model PagedView<NotificationDto>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>FromName</th>
+                        <th>Title</th>
+                        <th>Message</th>
+                        <th>Times</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in Model.Records)
+                    {
+                        var readBg = row.MarkAsRead ? "" : "bg-gray-200";
+                        var readIconColor = row.MarkAsRead ? "" : "text-warning";
+
+                        <tr class="@readBg">
+                            <td class="text-center">
+                                <a asp-action="Details" asp-controller="Notifications" asp-route-id="@row.Id">
+                                    <i class="fas fa-info-circle @readIconColor"></i>
+                                </a>
+                            </td>
+                            <td>@row.FromName</td>
+                            <td>@row.Title</td>
+                            <td>@row.Message</td>
+                            <td>@row.CreatedOn.ToLocalTime()</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <partial name="Components/_PagerPOST" model="@Model.SetSearchView(Url.Action(), "#content")" />
+    </div>
+</div>

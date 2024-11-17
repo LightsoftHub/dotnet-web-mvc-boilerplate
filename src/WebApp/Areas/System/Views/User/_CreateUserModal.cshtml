@@ -1,0 +1,100 @@
+﻿@model CreateUserRequest
+
+@{
+    ViewData["Title"] = "Add New User";
+}
+
+<s-modal-header />
+
+<form ajax asp-action="Create" autocomplete="off">
+
+    <div class="modal-body">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="row">
+            <div class="col-sm-12 col-md-12 col-xl-12">
+                <div class="form-group">
+                    <label asp-for="UserName" class="form-label"></label><span class="require">*</span>
+                    <div class="input-group">
+                        <input asp-for="UserName" type="text" class="form-control">
+                        <button class="btn btn-outline-secondary" type="button" onclick="getAdUser()">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <span asp-validation-for="UserName" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-sm-12 col-md-12 col-xl-12">
+                <div class="form-group">
+                    <label asp-for="Password" class="form-label"></label>
+                    <input asp-for="Password" type="password" class="form-control" autocomplete="off">
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-sm-12 col-md-12 col-xl-6">
+                <div class="form-group">
+                    <label asp-for="FirstName" class=" form-label"></label><span class="require">*</span>
+                    <input asp-for="FirstName" type="text" class="form-control" autocomplete="off" required>
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-sm-12 col-md-12 col-xl-6">
+                <div class="form-group">
+                    <label asp-for="LastName" class="form-label"></label><span class="require">*</span>
+                    <input asp-for="LastName" type="text" class="form-control" autocomplete="off" required>
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-sm-12 col-md-12 col-xl-6">
+                <div class="form-group">
+                    <label asp-for="PhoneNumber" class="form-label"></label>
+                    <input asp-for="PhoneNumber" type="text" class="form-control">
+                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-sm-12 col-md-12 col-xl-6">
+                <div class="form-group">
+                    <label asp-for="Email" class="form-label"></label>
+                    <input asp-for="Email" class="form-control">
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-sm-12 col-md-12 col-xl-12">
+                <div class="form-group">
+                    <label asp-for="UseDomainPassword" class="form-label"></label>
+                    <input asp-for="UseDomainPassword" type="checkbox">
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="modal-footer">
+        <btn-submit>Save</btn-submit>
+    </div>
+
+</form>
+
+<script>
+    function setUserInfo(obj) {
+        if (obj != null) {
+            $("#FirstName").val(obj.firstName);
+            $("#LastName").val(obj.lastName);
+            $("#PhoneNumber").val(obj.phoneNumber);
+            $("#Email").val(obj.email);
+            $("#UseDomainPassword").attr('checked', 'checked');
+        }
+    }
+
+    function getAdUser() {
+        let userName = $("#UserName").val();
+        var url = '@Url.Action("GetDomainUser")' + '?userName=' + userName;
+        $.get(url, setUserInfo);
+    }
+</script>

@@ -1,0 +1,43 @@
+﻿<nav class="pc-sidebar">
+    <div class="navbar-wrapper">
+        <div class="m-header">
+            <a asp-action="Index" asp-controller="Home" asp-area="" class="b-brand text-primary">
+                <!-- ========   Change your logo from here   ============ -->
+                <img src="~/images/dotnet/ASP-NET-Core-Logo.png" width="180px" class="img-fluid" alt="logo">
+                <span class="badge bg-light-success rounded-pill ms-2 theme-version">v0.1</span>
+            </a>
+        </div>
+        <div class="navbar-content">
+
+            <ul class="pc-navbar">
+                <li class="pc-item pc-caption">
+                    <label>Management</label>
+                </li>
+                <li class="pc-item pc-hasmenu">
+                    <a href="javascript:void(0)" class="pc-link">
+                        <span class="pc-micon">
+                            <svg class="pc-icon">
+                                <use xlink:href="#custom-cpu-charge"></use>
+                            </svg>
+                        </span>
+                        <span class="pc-mtext">System</span>
+                        <span class="pc-arrow"><i data-feather="chevron-right"></i></span>
+                    </a>
+                    <ul class="pc-submenu">
+                        <li class="pc-item @Html.IsSelected(controller: "User")">
+                            <a class="pc-link" asp-action="Index" asp-controller="User" asp-area="system">
+                                Users
+                            </a>
+                        </li>
+                        <li class="pc-item @Html.IsSelected(controller: "Role")">
+                            <a class="pc-link" asp-action="Index" asp-controller="Role" asp-area="system">
+                                Roles
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+</nav>

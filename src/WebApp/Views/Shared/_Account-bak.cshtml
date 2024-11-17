@@ -1,0 +1,50 @@
+﻿@if (_currentUser.IsAuthenticated)
+{
+    <li class="dropdown pc-h-item">
+        <a class="pc-head-link dropdown-toggle arrow-none me-0"
+           data-bs-toggle="dropdown"
+           href="javascript:void(0)"
+           role="button"
+           aria-haspopup="false"
+           aria-expanded="false">
+            <svg class="pc-icon">
+                <use xlink:href="#custom-setting-2"></use>
+            </svg>
+        </a>
+        <div class="dropdown-menu dropdown-menu-end pc-h-dropdown">
+            <a href="javascript:void(0)" class="dropdown-item">
+                <i class="ti ti-user"></i>
+                <span>My Account</span>
+            </a>
+            <a href="javascript:void(0)" class="dropdown-item">
+                <i class="ti ti-settings"></i>
+                <span>Settings</span>
+            </a>
+            <a href="javascript:void(0)" class="dropdown-item">
+                <i class="ti ti-headset"></i>
+                <span>Support</span>
+            </a>
+            <a href="javascript:void(0)" class="dropdown-item">
+                <i class="ti ti-lock"></i>
+                <span>Lock Screen</span>
+            </a>
+            <a asp-action="Logout" asp-controller="Auth" asp-area="" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" class="dropdown-item">
+                <i class="ti ti-power"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </li>
+}
+else
+{
+    <li class="dropdown pc-h-item header-user-profile">
+        <a asp-action="Login" asp-controller="Account" asp-area="" class="pc-head-link dropdown-toggle arrow-none me-0"
+           role="button"
+           aria-haspopup="false"
+           data-bs-auto-close="outside"
+           aria-expanded="false">
+            <img src="~/images/avatar.jpg" alt="user-image" class="user-avtar" />
+            Login
+        </a>
+    </li>
+}

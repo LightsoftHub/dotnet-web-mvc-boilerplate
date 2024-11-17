@@ -1,0 +1,62 @@
+﻿@inherits LayoutComponentBase
+
+<FluentToastProvider />
+<FluentDialogProvider />
+<FluentTooltipProvider />
+<FluentMessageBarProvider />
+<FluentMenuProvider />
+<FluentDesignTheme OfficeColor="OfficeColor.Teams" StorageName="@WebSettings.THEME_STORAGE_NAME" />
+
+<FluentLayout>
+
+    <Spinner />
+
+    <FluentHeader Class="siteheader">
+
+        @WebSettings.COMPANY_NAME
+
+        <FluentStack HorizontalAlignment="@HorizontalAlignment.End" VerticalAlignment="@VerticalAlignment.Center">
+
+            <div class="settings">
+                <CleanArch.eCode.WebBlazor.Components.Shared.Settings.SiteSettings />
+            </div>
+
+            <UserNotification />
+
+            <UserMenu />
+
+        </FluentStack>
+        
+    </FluentHeader>
+
+    <FluentStack Class="main" Orientation="Orientation.Horizontal">
+
+        <SideNav Expanded="expanded" />
+
+        <FluentBodyContent Class="body-content justify-content-center">
+            <div class="content" style="max-width: 1200px">
+                @Body
+            </div>
+        </FluentBodyContent>
+
+    </FluentStack>
+
+    <FluentFooter>
+        <a href="#" target="_blank">@WebSettings.APP_NAME</a>
+        <FluentSpacer />
+        <a href="#" target="_blank">© 2024 @WebSettings.COMPANY_NAME</a>
+    </FluentFooter>
+
+</FluentLayout>
+
+<div id="blazor-error-ui">
+    An unhandled error has occurred.
+    <a href="" class="reload">Reload</a>
+    <a class="dismiss">🗙</a>
+</div>
+
+@code {
+    private bool expanded = true;
+
+    public void DrawerToggle() => expanded = !expanded;
+}

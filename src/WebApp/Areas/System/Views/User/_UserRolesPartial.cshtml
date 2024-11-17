@@ -1,0 +1,12 @@
+﻿@{
+    List<UserRoleVm> userRoles = ViewBag.UserRoles;
+}
+
+@for (int i = 0; i < userRoles.Count; i++)
+{
+    <div class="form-switch">
+        <input asp-for="@userRoles[i].RoleName" hidden />
+        <input asp-for="@userRoles[i].IsOwned" type="checkbox" class="form-check-input">
+        <label class="form-check-label">@userRoles[i].RoleName</label>
+    </div>
+}

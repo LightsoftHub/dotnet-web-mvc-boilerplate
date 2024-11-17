@@ -1,0 +1,117 @@
+@page "/notifications"
+
+<PageHeader Title="Notifications" />
+
+@if (CurrentUser.HasPermission(Permissions.System.Notification))
+{
+    <Card Class="mb-3">
+
+        <FluentAutocomplete TOption="UserDto"
+        AutoComplete="off"
+        Autofocus="true"
+        Width="250px"
+        Placeholder="Select user"
+        MaximumSelectedOptions="1"
+        OptionText="@(item => item.UserName)"
+        OnOptionsSearch="@OnSearchAsync"
+        @bind-SelectedOptions="@selectedUsers" />
+
+        <div class="mt-2">
+            <FluentButton IconStart="@(new Icons.Regular.Size16.Search())"
+            OnClick=LoadDataAsync>
+                Search
+            </FluentButton>
+
+            <FluentButton IconStart="@(new Icons.Regular.Size16.AddCircle())"
+            Appearance="Appearance.Accent"
+            OnClick=OpenPushDialogAsync>
+                Push
+            </FluentButton>
+        </div>
+
+    </Card>
+}
+
+<Card>
+    <FluentDataGrid Items="@notifications" ShowHover="true">
+        <PropertyColumn Property="@(p => p.FromName)" />
+        <PropertyColumn Property="@(p => p.Title)" />
+        <PropertyColumn Property="@(p => p.Message)" />
+        <PropertyColumn Property="@(p => p.CreatedOn)" />
+    </FluentDataGrid>
+
+    <Pagination PagedInfo=pageInfo OnPageNoChanged=GoToPageAsync />
+</Card>
+
+@code {
+    private PagedInfo? pageInfo { get; set; }
+
+    private NotificationLookup notificationLookup = new();
+
+    private IQueryable<NotificationDto>? notifications;
+
+    private IEnumerable<UserDto>? selectedUsers { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GoToPageAsync(1);
+    }
+
+    private async Task LoadDataAsync()
+    {
+        var searchById = selectedUsers?.FirstOrDefault()?.Id ?? CurrentUser.UserId;
+
+        notificationLookup.ToUser = searchById;
+
+        var getEntries = await NotificationService.GetAsync(notificationLookup);
+
+        if (getEntries.Succeeded)
+        {
+            pageInfo = getEntries.PagedInfo;
+            notifications = getEntries.Data.AsQueryable();
+        }
+    }
+
+    private async Task GoToPageAsync(int page)
+    {
+        notificationLookup.Page = page;
+        await LoadDataAsync();
+    }
+
+    private async Task OnSearchAsync(OptionsSearchEventArgs<UserDto> e)
+    {
+        var getUsers = await UserService.GetAsync();
+
+        if (getUsers.Succeeded is false)
+        {
+            return;
+        }
+
+        e.Items = getUsers.Data
+            .Where(i => i.UserName!.StartsWith(e.Text, StringComparison.OrdinalIgnoreCase))
+            .OrderBy(i => i.UserName);
+    }
+
+    private async Task OpenPushDialogAsync()
+    {
+        DialogParameters parameters = new()
+        {
+            Title = $"Push message",
+            PreventDismissOnOverlayClick = true,
+            PreventScroll = true,
+        };
+
+        var dialog = await DialogService.ShowDialogAsync<PushNotification_Dialog>(parameters);
+        DialogResult? dialogResult = await dialog.Result;
+
+        if (!dialogResult.Cancelled && dialogResult.Data != null)
+        {
+            var result = (Result)dialogResult.Data;
+
+            if (result.Succeeded)
+            {
+                await GoToPageAsync(1);
+            }
+        }
+    }
+}

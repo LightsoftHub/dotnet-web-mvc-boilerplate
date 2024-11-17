@@ -1,0 +1,102 @@
+﻿@implements IDialogContentComponent
+
+<EditForm Model="@newMessage" OnValidSubmit=OnSubmitAsync FormName="pushNotificationForm">
+
+    <div class="mb-3">
+        <FluentAutocomplete
+            TOption="UserDto"
+            AutoComplete="off"
+            Autofocus="true"
+            Width="250px"
+            Placeholder="Send from user"
+            MaximumSelectedOptions="1"
+            OptionText="@(item => item.UserName)"
+            OnOptionsSearch="@OnSearch"
+            Label="From User"
+            @bind-SelectedOptions="@selectedFromUsers" />
+    </div>
+
+    <div class="mb-3">
+        <FluentAutocomplete 
+            TOption="UserDto"
+            AutoComplete="off"
+            Autofocus="true"
+            Width="250px"
+            Placeholder="Send to user"
+            MaximumSelectedOptions="1"
+            OptionText="@(item => item.UserName)"
+            OnOptionsSearch="@OnSearch"
+            Label="To User"
+            @bind-SelectedOptions="@selectedToUsers" />
+    </div>
+
+    <div class="mb-3">
+        <FluentTextField Class="w-100" @bind-Value="@newMessage.Title" Label="Title" Required />
+    </div>
+
+     <div class="mb-3">
+        <FluentTextArea Class="w-100" @bind-Value="@newMessage.Message" Label="Content" Required />
+    </div>
+
+    <div class="mb-3">
+        <FluentTextField Class="w-100" @bind-Value="@newMessage.Url" Label="Url" />
+    </div>
+
+    <FluentDialogFooter>
+        <FluentButton
+            Type="ButtonType.Submit"
+            Appearance="Appearance.Accent"
+            IconStart="@(new Icons.Regular.Size16.Send())">
+            Push
+        </FluentButton>
+    </FluentDialogFooter>
+
+ </EditForm>
+
+ @code {
+    [CascadingParameter]
+    public FluentDialog Dialog { get; set; } = null!;
+
+    private SystemMessage newMessage = new();
+
+    private IEnumerable<UserDto> usersList = Array.Empty<UserDto>();
+
+    private IEnumerable<UserDto> selectedFromUsers = Array.Empty<UserDto>();
+
+    private IEnumerable<UserDto> selectedToUsers = Array.Empty<UserDto>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        usersList = (await UserService.GetAsync()).Data;
+    }
+
+    private async Task OnSubmitAsync()
+    {
+        var toUser = selectedToUsers.FirstOrDefault();
+
+        if (toUser is null)
+        {
+            ToastService.ShowError("Please choose receive message user");
+            return;
+        }
+
+        newMessage.ToUserId = toUser.Id;
+        
+        var fromUser = selectedFromUsers.FirstOrDefault() ?? usersList.First(x => x.Id == CurrentUser.UserId);
+
+        newMessage.FromUserId = fromUser.Id;
+        newMessage.FromName = fromUser.FirstName + " " + fromUser.LastName;
+
+        await ExecuteService.CallGuardedAsync(
+            () => NotificationService.CreateAsync(newMessage),
+            $"Push message to user {toUser.UserName} success",
+            Dialog);
+    }
+
+    private void OnSearch(OptionsSearchEventArgs<UserDto> e)
+    {
+        e.Items = usersList
+            .Where(i => i.UserName!.StartsWith(e.Text, StringComparison.OrdinalIgnoreCase))
+            .OrderBy(i => i.UserName);
+    }
+}

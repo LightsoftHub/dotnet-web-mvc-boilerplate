@@ -1,0 +1,24 @@
+:root {
+    --card-height: auto;
+}
+
+.siteheader {
+    color: var(--neutral-foreground-rest) !important
+}
+
+.body-content {
+    height: unset !important;
+    margin-bottom: 20px !important;
+}
+
+/* fix Toastr display behind modal overlay */
+.fluent-toast-provider {
+    z-index: 9999 !important;
+}
+
+.data-grid {
+    overflow: auto;
+    min-width: 900px;
+    min-height: 450px;
+}
+

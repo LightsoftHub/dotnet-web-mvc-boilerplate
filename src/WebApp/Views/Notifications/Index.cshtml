@@ -1,0 +1,88 @@
+﻿@model NotificationLookup
+
+@{
+    ViewData["Title"] = "Notifications";
+}
+
+<page-header />
+
+<div class="animated fadeInRight">
+    <div class="card">
+        <div class="card-body">
+            <form ajax asp-action="Index" id="search-form" update-to="#content">
+
+                @if (_currentUser.HasPermission(Permissions.System.Notification))
+                {
+                    <div class="row mb-3">
+                        <div class="col-sm-12 col-md-12 col-xl-4">
+                            <label asp-for="ToUser" class="form-label"></label>
+                            <select class="form-select" id="ToUser" name="ToUser"></select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <btn-search>Search</btn-search>
+
+                        @if (_currentUser.HasPermission(Permissions.System.Notification))
+                        {
+                            <btn-modal url="@Url.Action("Create")">
+                                <i class="fas fa-bell"></i> Notify
+                            </btn-modal>
+                        }
+                    </div>
+                }
+            </form>
+        </div>
+    </div>
+
+    <div id="content" class="mt-3"></div>
+</div>
+
+@section Styles {
+    <partial name="Components/select2/_select2.css" />
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <partial name="Components/select2/_select2.js" />
+
+    <script type="text/javascript">
+        var searchUserUrl = 'system/user/search';
+
+        // get customer from Controller
+        $("#ToUser").select2({
+            allowClear: true,
+            placeholder: "Select a user",
+            minimumInputLength: 3,
+            ajax: {
+                url: searchUserUrl,
+                dataType: 'json',
+                type: "GET",
+                quietMillis: 50,
+                data: function (params) {
+                    var query = {
+                        search: params.term
+                    }
+
+                    // Query parameters will be ?search=[term]&type=public
+                    return query;
+                },
+                processResults: function (result) {
+                    return {
+                        results: $.map(result, function (item) {
+                            return {
+                                id: item.value,
+                                text: item.name
+                            };
+                        }),
+                    };
+                }
+            }
+        });
+
+        $(function () {
+            $("#search-form").submit();
+        });
+    </script>
+}

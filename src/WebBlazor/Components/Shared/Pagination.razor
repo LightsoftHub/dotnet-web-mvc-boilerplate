@@ -1,0 +1,183 @@
+﻿@using Light.Contracts
+
+@write
+
+@if (totalPages > 0)
+{
+    write++;
+
+    int previousPage = currentPage > 1 ? currentPage - 1 : 1;
+
+    int nextPage = currentPage == totalPages ? totalPages : currentPage + 1;
+
+    // get first page before ...
+    var fromPage = Math.Max(1, currentPage - pagesOnLeft);
+
+    // get last page after ...
+    var toPage = Math.Min(totalPages, currentPage + pagesOnRight);
+    toPage = totalPages - toPage == 1 ? totalPages : toPage;
+    
+    <div class="row mt-3">
+        <div class="col-sm-4">
+            <div>
+                Page <input id="jump-to-page" @onchange=JumpToPage value="@currentPage" /> of <b>@totalPages</b>
+            </div>
+            <small>Total <b>@totalRecords</b> records</small>
+        </div>
+        <div class="col-sm-8">
+
+            <ul class="pagination pagination-sm justify-content-end">
+
+                <li class="page-item">
+                    <a class="page-link" href="javascript:void(0)" @onclick="() => GoToPage(previousPage)">
+                        <span aria-hidden="true">«</span>
+                    </a>
+                </li>
+
+                @if (fromPage > 1)
+                {
+                    // view First page
+                    <li class="page-item">
+                        <a class="page-link" href="javascript:void(0)" @onclick="() => GoToPage(1)">1</a>
+                    </li>
+                    if (fromPage > 2)
+                    {
+                        // view first ...
+                        // calculate number page for link ..., it's middle between first page and fromPage
+                        <li class="page-item">
+                            <a class="page-link">...</a>
+                        </li>
+                    }
+                }
+
+                @for (int pageIndex = fromPage; pageIndex <= toPage; pageIndex++)
+                {
+                    // must capture page index for fix override pageIndex in next loop
+                    var capturedIndex = pageIndex;
+
+                    // view paginator between currentPage
+                    <li class="page-item @(currentPage == capturedIndex ? "active" : "")">
+                        <a class="page-link" href="javascript:void(0)" @onclick="() => GoToPage(capturedIndex)">@capturedIndex</a>
+                    </li>
+                }
+
+                @if (toPage < totalPages)
+                {
+                    // view second ...
+                    <li class="page-item">
+                        <a class="page-link">...</a>
+                    </li>
+
+                    // view last page
+                    if (toPage < totalPages - 1)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="javascript:void(0)" @onclick="() => GoToPage(totalPages)">@totalPages</a>
+                        </li>
+                    }
+                }
+
+                <li class="page-item">
+                    <a class="page-link" href="javascript:void(0)" @onclick="() => GoToPage(nextPage)">
+                        <span aria-hidden="true">»</span>
+                    </a>
+                </li>
+
+            </ul>
+
+        </div>
+
+    </div>
+}
+
+<style>
+    #jump-to-page {
+        background-color: #FFFFFF;
+        background-image: none;
+        border: 1px solid #e5e6e7;
+        border-radius: 1px;
+        color: inherit;
+        width: 50px;
+        font-weight: bold;
+        background: transparent;
+    }
+
+        #jump-to-page::-webkit-inner-spin-button,
+        #jump-to-page::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+    .page-link {
+        color: var(--accent-fill-rest) !important;
+        box-shadow: unset !important;
+        background: transparent;
+    }
+
+        .page-link:focus {
+            background-color: unset !important;
+        }
+
+        .active > .page-link, .page-link.active {
+            color: var(--foreground-on-accent-active) !important;
+            background-color: var(--accent-fill-rest) !important;
+            border-color: unset;
+        }
+</style>
+
+@code {
+    [Parameter]
+    public PagedInfo? PagedInfo { get; set; }
+
+    [Parameter]
+    public EventCallback<IPage> OnPageChanged { get; set; }
+
+    [Parameter]
+    public EventCallback<int> OnPageNoChanged { get; set; }
+
+    int write { get; set; } = 0;
+
+    // How many pages views left & right from currentPage
+    const int pagesOnLeft = 3;
+    const int pagesOnRight = 3;
+
+    // paged info
+    int currentPage = 1;
+    int totalPages = 0;
+    int totalRecords = 0;
+
+    protected override void OnParametersSet()
+    {
+        //write++;
+        var pagedInfo = PagedInfo;
+        if (pagedInfo != null)
+        {
+            currentPage = pagedInfo.Page;
+            totalPages = pagedInfo.TotalPages;
+            totalRecords = pagedInfo.TotalRecords;
+        }
+    }
+
+    private async Task GoToPage(int page)
+    {
+        if (page == currentPage || page < 1 || page > totalPages)
+            return;
+
+        await OnPageNoChanged.InvokeAsync(page);
+    }
+
+    private async Task JumpToPage(ChangeEventArgs e)
+    {
+        var tryGetPage = int.TryParse(e.Value?.ToString(), out var page);
+
+        if (tryGetPage is false)
+        {
+            return;
+        }
+
+        if (page < 1) page = 1;
+        else if (page > totalPages) page = totalPages;
+
+        await GoToPage(page);
+    }
+}

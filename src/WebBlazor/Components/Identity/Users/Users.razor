@@ -1,0 +1,188 @@
+﻿@page "/users"
+@using Light.Extensions
+@attribute [MustHavePermission(Permissions.Users.View)]
+
+<PageHeader Title="Users" />
+
+<Card>
+
+    <FluentButton IconStart="@(new Icons.Regular.Size16.AddCircle())" Appearance="Appearance.Accent" Onclick="OpenCreateDialogAsync">
+        Add new
+    </FluentButton>
+
+    <FluentButton IconStart="@(new Icons.Regular.Size16.ArrowDownload())" Onclick="ExportAsync">
+        Export
+    </FluentButton>
+
+    <FluentSearch Autofocus=true @bind-Value=nameFilter @oninput="HandleDataFilter" @bind-Value:after="HandleClear" Class="float-end" Placeholder="search..." />
+
+    <div class="table-responsive mt-3">
+
+        <FluentDataGrid Items="@filteredUsers"
+                        ResizableColumns=true
+                        ResizeType="DataGridResizeType.Discrete"
+                        Pagination="@pagination"
+                        HeaderCellAsButtonWithMenu="true"
+                        Class="data-grid"
+                        Loading="loading"
+                        ShowHover="true">
+
+            <PropertyColumn Property="@(c => c.UserName)" Sortable="true" Filtered="!string.IsNullOrWhiteSpace(nameFilter)" Tooltip="true" Title="Username" />
+
+            <PropertyColumn Title="Full Name" Property="@(c => $"{c.FirstName} {c.LastName}")" Sortable="false" />
+
+            <PropertyColumn Property="@(c => c.Email)" Sortable="false" />
+
+            <PropertyColumn Property="@(c => c.PhoneNumber)" Sortable="false" />
+
+            <TemplateColumn Title="Status">
+
+                <span class="badge @(context.Status == IdentityStatus.active ? "text-bg-info" : "text-bg-warning")">@context.Status</span>
+
+            </TemplateColumn>
+
+            <TemplateColumn Title="Actions" Align="Align.End">
+
+                <FluentButton
+                    aria-label="Edit"
+                    IconEnd="@(new Icons.Regular.Size16.Edit())" 
+                    OnClick="@(() => NavigationManager.NavigateTo($"/user/{context.Id}"))"/>
+
+                <FluentButton aria-label="Permissions"
+                    IconEnd="@(new Icons.Regular.Size16.ShieldAdd())"
+                    OnClick="() => OpenPanelRightAsync(context.Id, context.UserName)" />
+
+                <FluentButton aria-label="Delete"
+                    IconEnd="@(new Icons.Regular.Size16.Delete())"
+                    OnClick="@(() => ShowDeleteWarningAsync(context.Id, context.UserName))" />
+
+            </TemplateColumn>
+        </FluentDataGrid>
+
+    </div>
+
+    <FluentPaginator State="@pagination" />
+
+</Card>
+
+@code {
+    private IQueryable<UserDto>? users;
+
+    private PaginationState pagination = new PaginationState { ItemsPerPage = WebSettings.ItemsPerPage };
+
+    string nameFilter = string.Empty;
+
+    private bool loading = false;
+
+    IQueryable<UserDto>? filteredUsers
+    {
+        get
+        {
+            var result = users;
+
+            if (result is not null && !string.IsNullOrEmpty(nameFilter))
+            {
+                result = result.Where(c => c.UserName.Contains(nameFilter, StringComparison.CurrentCultureIgnoreCase));
+            }
+
+            return result;
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ReloadUserAsync();
+    }
+
+    private async Task ReloadUserAsync()
+    {
+        ToggleTableState();
+
+        var getUsers = await UserService.GetAsync();
+        if (getUsers.Succeeded)
+        {
+            users = getUsers.Data.AsQueryable();
+        }
+
+        ToggleTableState();
+    }
+
+    private void ToggleTableState()
+    {
+        loading = !loading;
+        StateHasChanged();
+    }
+
+    private void HandleDataFilter(ChangeEventArgs args)
+    {
+        if (args.Value is string value)
+        {
+            nameFilter = value;
+        }
+    }
+
+    private void HandleClear()
+    {
+        if (string.IsNullOrWhiteSpace(nameFilter))
+        {
+            nameFilter = string.Empty;
+        }
+    }
+
+    private async Task OpenCreateDialogAsync()
+    {
+        DialogParameters parameters = new()
+        {
+            Title = $"Create new user",
+            PreventDismissOnOverlayClick = true,
+            PreventScroll = true,
+            //Width = "500px"
+        };
+
+        var dialog = await DialogService.ShowDialogAsync<AddUser_Dialog>(parameters);
+        DialogResult? dialogResult = await dialog.Result;
+
+        if (!dialogResult.Cancelled && dialogResult.Data != null)
+        {
+            var result = (Result)dialogResult.Data;
+
+            if (result.Succeeded)
+            {
+                await ReloadUserAsync();
+            }
+        }
+    }
+
+    private async Task ShowDeleteWarningAsync(string id, string? username)
+    {
+        var dialog = await DialogService.ShowWarningAsync($"Are you sure you want to delete user {username}?");
+        var result = await dialog.Result;
+        if (result.Cancelled is false)
+        {
+            await ExecuteService.CallGuardedAsync(
+                () => UserService.DeleteAsync(id),
+                $"User {username} deleted",
+                () => ReloadUserAsync());
+        }
+    }
+
+    private async Task OpenPanelRightAsync(string id, string? username)
+    {
+        await DialogService.ShowPanelAsync<UpdateUserRoles_Panel>(id, new DialogParameters<string>()
+        {
+            Content = id,
+            Alignment = HorizontalAlignment.Right,
+            Title = $"{username} roles",
+            PrimaryAction = null,
+            SecondaryAction = null,
+            PreventDismissOnOverlayClick = true,
+        });
+    }
+
+    private async Task ExportAsync()
+    {
+        var file = await UserService.ExportAsync();
+
+        await JSRuntime.InvokeVoidAsync("downloadFromStream", "Users.xlsx", file);
+    }
+}

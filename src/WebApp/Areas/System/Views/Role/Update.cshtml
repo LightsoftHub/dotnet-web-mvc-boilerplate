@@ -1,0 +1,113 @@
+﻿@model RoleVm
+
+@{
+    ViewData["Title"] = "Role Details";
+    IEnumerable<string> roleClaims = Model.Claims;
+}
+
+<page-header />
+
+<div class="row">
+    <div class="col-sm-12 col-md-12 col-xl-4 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <form id="updateRoleForm" asp-route-id="@Model.Id" autocomplete="off">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="form-group">
+                        <label asp-for="Name" class="form-label"></label>
+                        <input asp-for="Name" type="text" class="form-control">
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Description" class="form-label"></label>
+                        <input asp-for="Description" type="text" class="form-control">
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="d-grid gap-2">
+            <button type="button" onclick="Update()" class="btn btn-primary">
+                <i class="far fa-check-circle"></i>
+                Update
+            </button>
+        </div>
+    </div>
+
+    <div class="col-sm-12 col-md-12 col-xl-8">
+        <div class="card">
+            <div class="card-body">
+                <div id="claimsTree">
+                    <ul>
+                        @foreach (var resource in ClientClaimsExtensions.GetAllResources())
+                        {
+                            <li class="jstree-open">
+                                <b>@resource.Name @(!string.IsNullOrEmpty(resource.Description) ? $" - {resource.Description}" : string.Empty)</b>
+                                <ul>
+                                    @foreach (var claim in resource.Claims)
+                                    {
+                                        var selected = roleClaims.Contains(claim.Value) ? "true" : "false";
+                                        <li id="@claim.Value" data-jstree='{"selected":@selected, "type":"sub"}'>
+                                            @claim.Name @(!string.IsNullOrEmpty(claim.Description) ? $"({claim.Description})" : string.Empty)
+                                        </li>
+                                    }
+                                </ul>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/lib/jsTree/dist/themes/default/style.min.css">
+}
+
+@section Scripts {
+    <script src="~/lib/jsTree/dist/jstree.min.js"></script>
+
+    <script type="text/javascript">
+
+        let claimArray = [];
+
+        $("#claimsTree")
+            // listen for event
+            .on('changed.jstree', function(e, data) {
+                var i, j, r = [];
+                for (i = 0, j = data.selected.length; i < j; i++) {
+                    const value = data.instance.get_node(data.selected[i]).id;
+                    if (!value.includes('_')) {
+                        r.push(value);
+                    }
+                }
+                claimArray = r;
+                //$('#event_result').html('Selected: ' + claimArray.join(', '));
+            })
+            .jstree({
+                "plugins": ['wholerow', 'checkbox', 'types', 'dnd'],
+                'types': {
+                    'default': {
+                        'icon': 'fas fa-folder'
+                    },
+                    'sub': {
+                        'icon': false
+                    }
+                }
+            });
+
+        function Update() {
+            let fd = $("#updateRoleForm").serializeArray(); // convert form to array
+
+            claimArray.forEach(element => {
+                fd.push({ name: "Claims", value: element });
+            });
+
+            $.post('@Url.Action("Update")', fd);
+        };
+    </script>
+}
+

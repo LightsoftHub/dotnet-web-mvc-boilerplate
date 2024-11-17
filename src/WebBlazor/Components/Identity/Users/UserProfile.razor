@@ -1,0 +1,160 @@
+﻿@page "/user/{id}"
+
+<PageHeader Title="User Details" />
+
+@if (user is not null)
+{
+    <Card>
+        <div class="text-center">
+            <FluentPersona Name="@($"{user.FirstName} {user.LastName}")"
+                           Status="PresenceStatus.Available"
+                           StatusSize="PresenceBadgeSize.Small"
+                           StatusTitle="He is available"
+                           Image="/images/no-image.png"
+                           ImageSize="50px">
+            </FluentPersona>
+        </div>
+
+        <hr />
+
+        <div class="mt-3">
+            <FluentIcon Value="@(new Icons.Regular.Size20.Phone())" /> @user.PhoneNumber
+            <br />
+            <FluentIcon Value="@(new Icons.Regular.Size20.Mail())" /> @user.Email
+        </div>
+    </Card>
+    
+    <div class="row mt-3">
+
+        <div class="col-sm-8 col-lg-9">
+            <Card>
+                <EditForm Model="@user" OnValidSubmit=OnUpdateUserAsync FormName="updateUserProfileForm">
+
+                    <div class="row">
+                        <div class="col-8">
+                            <div>
+                                <FluentTextField @bind-Value="user.FirstName" Label="First Name" Required />
+                             </div>
+
+                            <div class="mt-3">
+                                <FluentTextField @bind-Value="user.LastName" Label="Last Name" Required />
+                            </div>
+
+                            <div class="mt-3">
+                                <FluentTextField @bind-Value="user.PhoneNumber" Label="Phone Number" Required />
+                            </div>
+
+                            <div class="mt-3">
+                                <FluentTextField @bind-Value="user.Email" Label="Email" Required />
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div>
+                                 <FluentRadioGroup @bind-Value="@user.Status" Name="status" Orientation="Orientation.Vertical" Label="Status">
+                                     <FluentRadio Value="@(IdentityStatus.unactive)">unactive</FluentRadio>
+                                     <FluentRadio Value="@(IdentityStatus.locked)">locked</FluentRadio>
+                                     <FluentRadio Value="@(IdentityStatus.active)">active</FluentRadio>
+                                 </FluentRadioGroup>
+                            </div>
+                            <div class="mt-3">
+                                <FluentSwitch @bind-Value="@user.UseDomainPassword" Label="Use Domain Password" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-3 text-end">
+                         <FluentButton
+                             Type="ButtonType.Submit"
+                             Appearance="Appearance.Accent"
+                             IconStart="@(new Icons.Regular.Size16.Save())">Update</FluentButton>
+                    </div>
+
+                </EditForm>
+
+             </Card>
+        </div>
+
+        <div class="col-sm-4 col-lg-3">
+
+            <Card>
+
+                <EditForm Model="@resetPassword" OnValidSubmit=OnResetPasswordAsync FormName="resetPasswordForm">
+
+                    <FluentTextField Name="resetPassword" @bind-Value="resetPassword" TextFieldType="TextFieldType.Password" Label="Password" Required />
+
+                    <div class="mt-3">
+                        <FluentButton
+                            Type="ButtonType.Submit"
+                            Appearance="Appearance.Accent"
+                            IconStart="@(new Icons.Regular.Size16.Key())">Reset</FluentButton>
+                    </div>
+
+                </EditForm>
+
+             </Card>
+
+        </div>
+
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string Id { get; set; } = null!;
+
+    private UserDto user { get; set; } = default!;
+
+    [SupplyParameterFromForm]
+    [Required]
+    private string resetPassword { get; set; } = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var getUserDetails = await UserService.GetByIdAsync(Id);
+        if (getUserDetails.Succeeded)
+        {
+            user = getUserDetails.Data;
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/");
+        }
+    }
+
+    private async Task OnUpdateUserAsync()
+    {
+        var result = await ExecuteService.CallGuardedAsync(
+            () => UserService.UpdateAsync(user),
+            $"Update profile for user {user.UserName} success"
+        );
+
+        if (result.Succeeded)
+        {
+            user = (await UserService.GetByIdAsync(user.Id)).Data;
+        }
+    }
+
+    private async Task OnResetPasswordAsync()
+    {
+        if (user.UseDomainPassword)
+        {
+            ToastService.ShowError("User is linked to AD");
+            return;
+        }
+
+        if (string.IsNullOrEmpty(resetPassword))
+        {
+            ToastService.ShowError("Password cannot blank");
+            return;
+        }
+
+        var changePassword = await ExecuteService.CallGuardedAsync(
+            () => UserService.ForcePasswordAsync(user.Id, resetPassword),
+            $"Change password for user {user.UserName} success");
+
+        if (changePassword.Succeeded)
+        {
+            resetPassword = "";
+        }
+    }
+}

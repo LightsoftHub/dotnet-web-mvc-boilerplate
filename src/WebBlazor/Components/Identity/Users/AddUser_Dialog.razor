@@ -1,0 +1,68 @@
+﻿@implements IDialogContentComponent
+
+<div class="mt-3">
+    <FluentTextField Size="20" ValueChanged=SearchDomainUserAsync Required>
+        Username
+        <FluentIcon Value="@(new Icons.Regular.Size20.Search())" Color="@Color.Neutral" Slot="end" />
+    </FluentTextField>
+
+    <FluentTextField @bind-Value="@newUser.Password" Size="textSize" Required>Password</FluentTextField>
+</div>
+
+<div class="mt-3">
+    <FluentTextField @bind-Value="@newUser.FirstName" Size="textSize" Required>Firstname</FluentTextField>
+
+    <FluentTextField @bind-Value="@newUser.LastName" Size="textSize" Required>Lastname</FluentTextField>
+</div>
+
+<div class="mt-3">
+    <FluentTextField @bind-Value="@newUser.PhoneNumber" Size="textSize" Required>Phone</FluentTextField>
+
+    <FluentTextField @bind-Value="@newUser.Email" Size="textSize" Required>Email</FluentTextField>
+</div>
+
+<div class="mt-3">
+    <FluentSwitch @bind-Value="@newUser.UseDomainPassword" Label="Use Domain Password" />
+</div>
+
+<FluentDialogFooter>
+    <FluentButton Appearance="Appearance.Accent" OnClick=CreateAsync>Create</FluentButton>
+</FluentDialogFooter>
+
+
+
+@code {
+    [CascadingParameter]
+    public FluentDialog Dialog { get; set; } = null!;
+
+    private CreateUserRequest newUser = new();
+
+    private int textSize = 25;
+
+    private async Task SearchDomainUserAsync(string username)
+    {
+        newUser.UserName = username;
+
+        if (string.IsNullOrEmpty(username))
+            return;
+
+        var getDomainUser = await UserService.GetDomainUserAsync(username);
+
+        if (getDomainUser.Succeeded)
+        {
+            newUser.FirstName = getDomainUser.Data.FirstName;
+            newUser.LastName = getDomainUser.Data.LastName;
+            newUser.Email = getDomainUser.Data.Email;
+            newUser.PhoneNumber = getDomainUser.Data.PhoneNumber;
+            newUser.UseDomainPassword = true;
+        }
+    }
+
+    private async Task CreateAsync()
+    {
+        await ExecuteService.CallGuardedAsync(
+            () => UserService.CreateAsync(newUser),
+            $"New user {newUser.UserName} created",
+            Dialog);
+    }
+}

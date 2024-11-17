@@ -1,0 +1,64 @@
+﻿@implements IDialogContentComponent
+
+@using CleanArch.eCode.HttpApi.Client.Identity
+@using CleanArch.eCode.Shared.Notifications
+
+@inject NotificationHttpService NotificationService
+
+@foreach (var entry in notifications)
+{
+    var css = entry.MarkAsRead ? "" : "text-bg-secondary";
+    css += " mb-2";
+
+    <Card Class="@css">
+
+        <FluentLabel Typo="Typography.H5">@entry.Title</FluentLabel>
+
+        <div class="mt-2">
+            @entry.Message
+        </div>
+
+        <div class="text-end">
+
+            @if (!string.IsNullOrEmpty(entry.Url))
+            {
+                <a href="@entry.Url" target="_blank" @onclick="() => ReadEntryAsync(entry.Id)">Details</a>
+            }
+            else if (entry.MarkAsRead is false)
+            {
+                <a href="javascript:void(0)" @onclick="() => ReadEntryAsync(entry.Id)">Dismiss</a>
+            }
+            
+        </div>
+
+    </Card>
+}
+
+@code {
+    private IEnumerable<NotificationDto> notifications = Array.Empty<NotificationDto>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadNotificationsAsync();
+    }
+
+    private async Task LoadNotificationsAsync()
+    {
+        var userId = CurrentUser.UserId!;
+
+        var filter = new NotificationLookup { ToUser = userId };
+
+        var getNotifications = await NotificationService.GetAsync(filter);
+
+        if (getNotifications.Succeeded)
+        {
+            notifications = getNotifications.Data;
+        }
+    }
+
+    private async Task ReadEntryAsync(string id)
+    {
+        await NotificationService.ReadAsync(id);
+        await LoadNotificationsAsync();
+    }
+}
