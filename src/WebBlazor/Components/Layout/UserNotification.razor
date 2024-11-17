@@ -3,7 +3,7 @@
 @inject SignalRClientService SignalRClientService
 
 <FluentCounterBadge Count="@unreadCount" BackgroundColor="@Color.Error" Color="Color.Fill">
-    <FluentButton BackgroundColor="var(--neutral-layer-4)">
+    <FluentButton BackgroundColor="var(--neutral-layer-4)" OnClick="OpenUserNotificationsPanelAsync">
         <FluentIcon Value="@(new Icons.Regular.Size20.Alert())" Color="@Color.Neutral" Class="@animate" />
     </FluentButton>
 </FluentCounterBadge>
@@ -16,7 +16,7 @@
     protected override async Task OnInitializedAsync()
     {
         await CountUnreadAsync();
-        
+
         var accessToken = CurrentUser.AccessToken;
 
         // Connect to the SignalR hub with the token
@@ -43,5 +43,16 @@
 
         if (unreadCount == 0)
             animate = "";
+    }
+
+    private async Task OpenUserNotificationsPanelAsync()
+    {
+        await DialogService.ShowPanelAsync<UserNotifications_Panel>(new DialogParameters<string>()
+        {
+            Alignment = HorizontalAlignment.Right,
+            Title = "Notifications",
+            PrimaryAction = null,
+            SecondaryAction = null,
+        });
     }
 }
