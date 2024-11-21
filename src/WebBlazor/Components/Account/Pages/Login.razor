@@ -44,11 +44,7 @@
 
                     <FluentCheckbox Name="Input.RememberMe" @bind-Value="@Input.RememberMe">Remember</FluentCheckbox>
 
-                    <FluentButton Type="ButtonType.Submit" Loading="loading" Appearance="Appearance.Accent" Style="width: 100%">Log in</FluentButton>
-                    
-                    <FluentOverlay @bind-Visible=@loading Opacity="0.4" Alignment="Align.Center" Justification="JustifyContent.Center">
-                        <FluentProgressRing />
-                    </FluentOverlay>
+                    <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Accent" Style="width: 100%">Log in</FluentButton>
 
                 </FluentStack>
             </EditForm>
@@ -66,9 +62,6 @@
     private string? ReturnUrl { get; set; }
 
     private string? errorMessage;
-
-    private bool loading = false;
-
 
     protected override void OnInitialized()
     {

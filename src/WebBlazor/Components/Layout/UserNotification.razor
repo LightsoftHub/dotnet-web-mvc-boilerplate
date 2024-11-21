@@ -1,4 +1,6 @@
-﻿@using CleanArch.eCode.HttpApi.Client.Identity
+﻿@implements IAsyncDisposable
+
+@using CleanArch.eCode.HttpApi.Client.Identity
 @inject NotificationHttpService NotificationService
 @inject SignalRClientService SignalRClientService
 
@@ -39,7 +41,7 @@
         if (string.IsNullOrEmpty(currentUserId))
             return;
 
-        unreadCount = (await NotificationService.CountUnreadAsync(currentUserId)).Data;
+        unreadCount = await NotificationService.CountUnreadAsync(currentUserId);
 
         if (unreadCount == 0)
             animate = "";
@@ -47,12 +49,24 @@
 
     private async Task OpenUserNotificationsPanelAsync()
     {
-        await DialogService.ShowPanelAsync<UserNotifications_Panel>(new DialogParameters<string>()
+        var dialog = await DialogService.ShowPanelAsync<UserNotifications_Panel>(new DialogParameters<string>()
         {
             Alignment = HorizontalAlignment.Right,
             Title = "Notifications",
             PrimaryAction = null,
             SecondaryAction = null,
         });
+
+        var dialogResult = await dialog.Result;
+
+        if (dialogResult.Cancelled)
+        {
+            await CountUnreadAsync();
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await SignalRClientService.DisconnectAsync();
     }
 }

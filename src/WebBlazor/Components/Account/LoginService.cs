@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication;
-using System.Security.Claims;
-using CleanArch.eCode.HttpApi.Client.Identity;
+﻿using CleanArch.eCode.HttpApi.Client.Identity;
 using Light.Contracts;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Security.Claims;
 
 namespace CleanArch.eCode.WebBlazor.Components.Account;
 

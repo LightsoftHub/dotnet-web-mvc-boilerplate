@@ -54,7 +54,7 @@
 
                 <FluentButton aria-label="Delete"
                     IconEnd="@(new Icons.Regular.Size16.Delete())"
-                    OnClick="@(() => ShowDeleteWarningAsync(context.Id, context.UserName))" />
+                    OnClick="() => ShowDeleteWarningAsync(context.Id, context.UserName)" />
 
             </TemplateColumn>
         </FluentDataGrid>

@@ -5,6 +5,24 @@
 
 @inject NotificationHttpService NotificationService
 
+<FluentStack HorizontalAlignment="HorizontalAlignment.Right" Class="mb-2">
+    <FluentCounterBadge BackgroundColor="@Color.Error" Color="Color.Fill">
+        <FluentButton Appearance="Appearance.Neutral" OnClick="() => ToggleFilterAsync(false)">
+            <FluentIcon Value="@(new Icons.Regular.Size20.List())" Color="@Color.FillInverse" />
+        </FluentButton>
+    </FluentCounterBadge>
+
+    @if (unread > 0)
+    {
+        <FluentCounterBadge Count="@unread" BackgroundColor="@Color.Error" Color="Color.Fill">
+            <FluentButton Appearance="Appearance.Neutral" OnClick="() => ToggleFilterAsync(true)">
+                <FluentIcon Value="@(new Icons.Regular.Size20.Alert())" Color="@Color.FillInverse" />
+            </FluentButton>
+        </FluentCounterBadge>
+    }
+
+</FluentStack>
+
 @foreach (var entry in notifications)
 {
     var css = entry.MarkAsRead ? "" : "text-bg-secondary";
@@ -28,14 +46,20 @@
             {
                 <a href="javascript:void(0)" @onclick="() => ReadEntryAsync(entry.Id)">Dismiss</a>
             }
-            
+
         </div>
+
+        <small class="float-end mt-1">@entry.CreatedOn</small>
 
     </Card>
 }
 
 @code {
     private IEnumerable<NotificationDto> notifications = Array.Empty<NotificationDto>();
+
+    private NotificationLookup notificationByUser = new NotificationLookup();
+
+    private int unread = 0;
 
     protected override async Task OnInitializedAsync()
     {
@@ -46,19 +70,31 @@
     {
         var userId = CurrentUser.UserId!;
 
-        var filter = new NotificationLookup { ToUser = userId };
+        notificationByUser.ToUser = userId;
 
-        var getNotifications = await NotificationService.GetAsync(filter);
+        var getNotifications = await NotificationService.GetAsync(notificationByUser);
 
         if (getNotifications.Succeeded)
         {
             notifications = getNotifications.Data;
+            unread = await NotificationService.CountUnreadAsync(userId);
         }
     }
 
     private async Task ReadEntryAsync(string id)
     {
         await NotificationService.ReadAsync(id);
+        await LoadNotificationsAsync();
+    }
+
+    private async Task ToggleFilterAsync(bool onlyUnread)
+    {
+        if (notificationByUser.OnlyUnread == onlyUnread)
+        {
+            return;
+        }
+
+        notificationByUser.OnlyUnread = onlyUnread;
         await LoadNotificationsAsync();
     }
 }

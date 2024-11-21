@@ -33,12 +33,12 @@
 
                 <FluentButton
                     aria-label="Edit"
-                    IconEnd="@(new Icons.Regular.Size16.Edit())" 
-                    OnClick="@(() => NavigationManager.NavigateTo($"/user/{context.Id}"))"/>
+                    IconEnd="@(new Icons.Regular.Size16.Edit())"
+                    OnClick="() => OpenUpdatePanelRightAsync(context.Id, context.Name)" />
 
                 <FluentButton aria-label="Delete"
                     IconEnd="@(new Icons.Regular.Size16.Delete())"
-                    OnClick="@(() => ShowDeleteWarningAsync(context.Id, context.Name))" />
+                    OnClick="() => ShowDeleteWarningAsync(context.Id, context.Name)" />
 
             </TemplateColumn>
         </FluentDataGrid>
@@ -146,6 +146,26 @@
                 () => RoleService.DeleteAsync(id),
                 $"Role {name} deleted",
                 () => ReloadDataAsync());
+        }
+    }
+
+    private async Task OpenUpdatePanelRightAsync(string id, string name)
+    {
+        var dialog = await DialogService.ShowPanelAsync<UpdateRoles_Panel>(id, new DialogParameters<string>()
+        {
+            Content = id,
+            Alignment = HorizontalAlignment.Right,
+            Title = $"{name}",
+            PrimaryAction = null,
+            SecondaryAction = null,
+            PreventDismissOnOverlayClick = true,
+        });
+
+        var dialogResult = await dialog.Result;
+
+        if (dialogResult.Cancelled)
+        {
+            await ReloadDataAsync();
         }
     }
 }

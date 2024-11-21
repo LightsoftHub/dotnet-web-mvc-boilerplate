@@ -44,7 +44,7 @@ public abstract class HttpClientBase(IHttpClientFactory httpClientFactory)
         var file = await DownloadFileAsync(url);
 
         var base64Content = file.ToBase64String();
-        
+
         return base64Content;
     }
 }

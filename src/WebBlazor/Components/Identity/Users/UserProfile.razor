@@ -130,7 +130,7 @@
 
         if (result.Succeeded)
         {
-            user = (await UserService.GetByIdAsync(user.Id)).Data;
+            user = await UserService.GetByIdAsync(user.Id);
         }
     }
 

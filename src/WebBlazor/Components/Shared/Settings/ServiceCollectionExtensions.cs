@@ -1,5 +1,3 @@
-using Microsoft.Extensions.DependencyInjection;
-
 namespace CleanArch.eCode.WebBlazor.Components.Shared.Settings;
 
 public static class ServiceCollectionExtensions

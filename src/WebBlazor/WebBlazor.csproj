@@ -20,4 +20,10 @@
     <ProjectReference Include="..\Infrastructure.Auth\Infrastructure.Auth.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Components\Identity\Roles\UpdateRoles_Panel.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
+  </ItemGroup>
+
 </Project>
